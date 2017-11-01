@@ -43,7 +43,7 @@ class CQCADGui(QMainWindow):
 
         :return: None
         """
-        QMessageBox.about(self, "Not Implemented", "This feature has not been implemented yet. If you would like to see this feature in the release version, please vote on the GitHub repository.")
+        QMessageBox.about(self, "Not Implemented", "This feature has not been implemented yet. If you would like to see this feature in the release version, please create an issue on the GitHub repository. https://github.com/jmwright/cqcad")
 
 
     def switchModes(self):
@@ -171,10 +171,10 @@ class CQCADGui(QMainWindow):
         extrasAct.setStatusTip('Extras')
         extrasAct.triggered.connect(self.notImplemented)
 
-        prefsAct = QAction('&Preferences', self)
-        # prefsAct.setShortcut('F6')
-        prefsAct.setStatusTip('Preferences')
-        prefsAct.triggered.connect(self.notImplemented)
+        settingsAct = QAction('&Settings', self)
+        # settingsAct.setShortcut('F6')
+        settingsAct.setStatusTip('Settings')
+        settingsAct.triggered.connect(self.notImplemented)
 
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
@@ -192,7 +192,7 @@ class CQCADGui(QMainWindow):
         fileMenu.addAction(exitAct)
         editMenu = menubar.addMenu('&Edit')
         editMenu.addAction(extrasAct)
-        editMenu.addAction(prefsAct)
+        editMenu.addAction(settingsAct)
         viewMenu = menubar.addMenu('&View')
         modesMenu = QMenu('Modes', self)
         viewMenu.addMenu(modesMenu)
