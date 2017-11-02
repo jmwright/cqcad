@@ -11,12 +11,13 @@ License: LGPL 3.0
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog
 from PyQt5.QtGui import QIcon
 from _version import __version__
 
 
 class CQCADGui(QMainWindow):
+    settings = QtCore.QSettings('cqcad', 'cqcad')       # Platform independent application settings
     script1stAct = None
     mouse1stAct = None
     genAct = None
@@ -231,7 +232,7 @@ class CQCADGui(QMainWindow):
         settingsAct = QAction('&' + setsName, self)
         # settingsAct.setShortcut('F6')
         settingsAct.setStatusTip(setsTip)
-        settingsAct.triggered.connect(self.notImplemented)
+        settingsAct.triggered.connect(self.showSettingsDialog)
 
         menubar = self.menuBar()
         self.fileMenu = menubar.addMenu('&' + fileName)
@@ -276,6 +277,17 @@ class CQCADGui(QMainWindow):
         # centralLayout = QtGui.QHBoxLayout()
 
         self.showMaximized()
+
+
+    def showSettingsDialog(self):
+        d = QDialog()
+        # b1 = QPushButton("ok", d)
+        # b1.move(50, 50)
+        d.setWindowTitle("CQCad Settings")
+        # d.setWindowModality(Qt.ApplicationModal)
+        d.exec_()
+
+        # TODO: Init with keybindings, execute_on_save, use_external_editor, max_line_length settings, line_numbers
 
 
 def main():
