@@ -15,10 +15,14 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, Q
 from PyQt5.QtGui import QIcon
 from _version import __version__
 
+
 class CQCADGui(QMainWindow):
     script1stAct = None
     mouse1stAct = None
     genAct = None
+    fileMenu = None             # The File menu
+    recentMenu = None           # The recent scripts submenu
+    examplesMenu = None         # The examples submenu
 
     def __init__(self):
         super(CQCADGui, self).__init__()
@@ -230,19 +234,19 @@ class CQCADGui(QMainWindow):
         settingsAct.triggered.connect(self.notImplemented)
 
         menubar = self.menuBar()
-        fileMenu = menubar.addMenu('&' + fileName)
-        fileMenu.addAction(newProjAct)
-        fileMenu.addAction(openProjAct)
-        fileMenu.addAction(closeProjAct)
-        recentMenu = QMenu(rcntName, self)
-        fileMenu.addMenu(recentMenu)
-        examplesMenu = QMenu(exName, self)
-        fileMenu.addMenu(examplesMenu)
-        fileMenu.addSeparator()
-        fileMenu.addAction(importAct)
-        fileMenu.addAction(exportAct)
-        fileMenu.addSeparator()
-        fileMenu.addAction(exitAct)
+        self.fileMenu = menubar.addMenu('&' + fileName)
+        self.fileMenu.addAction(newProjAct)
+        self.fileMenu.addAction(openProjAct)
+        self.fileMenu.addAction(closeProjAct)
+        self.recentMenu = QMenu(rcntName, self)
+        self.fileMenu.addMenu(self.recentMenu)
+        self.examplesMenu = QMenu(exName, self)
+        self.fileMenu.addMenu(self.examplesMenu)
+        self.fileMenu.addSeparator()
+        self.fileMenu.addAction(importAct)
+        self.fileMenu.addAction(exportAct)
+        self.fileMenu.addSeparator()
+        self.fileMenu.addAction(exitAct)
         editMenu = menubar.addMenu('&' + editName)
         editMenu.addAction(extrasAct)
         editMenu.addAction(settingsAct)
