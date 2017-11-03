@@ -20,7 +20,6 @@ class CQCADGui(QMainWindow):
     settings = QtCore.QSettings('cqcad', 'cqcad')       # Platform independent application settings
     script1stAct = None
     mouse1stAct = None
-    genAct = None
     fileMenu = None             # The File menu
     recentMenu = None           # The recent scripts submenu
     examplesMenu = None         # The examples submenu
@@ -69,25 +68,20 @@ class CQCADGui(QMainWindow):
         # Toggle all the other items that were not selected
         if sending_button.objectName() == 'mouse_first':
             self.script1stAct.setChecked(False)
-            self.genAct.setChecked(False)
         elif sending_button.objectName() == 'script_first':
             self.mouse1stAct.setChecked(False)
-            self.genAct.setChecked(False)
-        else:
-            self.mouse1stAct.setChecked(False)
-            self.script1stAct.setChecked(False)
 
 
     def initUI(self):
         # Translations of menu items
         exitName = QtCore.QCoreApplication.translate('cqcad', "Exit")
         exitTip = QtCore.QCoreApplication.translate('cqcad', "Exit application")
-        nProjName = QtCore.QCoreApplication.translate('cqcad', "New Project")
-        nProjTip = QtCore.QCoreApplication.translate('cqcad', "New project")
-        oProjName = QtCore.QCoreApplication.translate('cqcad', "Open Project")
-        oProjTip = QtCore.QCoreApplication.translate('cqcad', "Open project")
-        cProjName = QtCore.QCoreApplication.translate('cqcad', "Close Project")
-        cProjTip = QtCore.QCoreApplication.translate('cqcad', "Close project")
+        newName = QtCore.QCoreApplication.translate('cqcad', "New")
+        newTip = QtCore.QCoreApplication.translate('cqcad', "New project or script")
+        openName = QtCore.QCoreApplication.translate('cqcad', "Open")
+        openTip = QtCore.QCoreApplication.translate('cqcad', "Open project or script")
+        closeName = QtCore.QCoreApplication.translate('cqcad', "Close")
+        closeTip = QtCore.QCoreApplication.translate('cqcad', "Close project or script")
         impName = QtCore.QCoreApplication.translate('cqcad', "Import")
         impTip = QtCore.QCoreApplication.translate('cqcad', "Import")
         expName = QtCore.QCoreApplication.translate('cqcad', "Export")
@@ -100,20 +94,20 @@ class CQCADGui(QMainWindow):
         dbgTip = QtCore.QCoreApplication.translate('cqcad', "Debug script")
         validName = QtCore.QCoreApplication.translate('cqcad', "Validate")
         validTip = QtCore.QCoreApplication.translate('cqcad', "Validate script")
-        m1stName = QtCore.QCoreApplication.translate('cqcad', "Mouse First")
-        m1stTip = QtCore.QCoreApplication.translate('cqcad', "Mouse first")
+        m1stName = QtCore.QCoreApplication.translate('cqcad', "Mouse First (Experimental)")
+        m1stTip = QtCore.QCoreApplication.translate('cqcad', "Mouse first (experimental)")
         s1stName = QtCore.QCoreApplication.translate('cqcad', "Script First")
         s1stTip = QtCore.QCoreApplication.translate('cqcad', "Script first")
-        genName = QtCore.QCoreApplication.translate('cqcad', "Generative")
-        genTip = QtCore.QCoreApplication.translate('cqcad', "Generative")
         pEdName = QtCore.QCoreApplication.translate('cqcad', "Parameters Editor")
         pEdTip = QtCore.QCoreApplication.translate('cqcad', "Parameters editor")
         viewerName = QtCore.QCoreApplication.translate('cqcad', "Object Viewer")
         viewerTip = QtCore.QCoreApplication.translate('cqcad', "Object viewer")
         conName = QtCore.QCoreApplication.translate('cqcad', "Console")
         conTip = QtCore.QCoreApplication.translate('cqcad', "Console")
-        extrasName = QtCore.QCoreApplication.translate('cqcad', "Extras")
-        extrastip = QtCore.QCoreApplication.translate('cqcad', "Extras")
+        libsName = QtCore.QCoreApplication.translate('cqcad', "Collections")
+        libsTip = QtCore.QCoreApplication.translate('cqcad', "Collections")
+        extsName = QtCore.QCoreApplication.translate('cqcad', "Extensions")
+        extsTip = QtCore.QCoreApplication.translate('cqcad', "Extensions")
         setsName = QtCore.QCoreApplication.translate('cqcad', "Settings")
         setsTip = QtCore.QCoreApplication.translate('cqcad', "Settings")
         fileName = QtCore.QCoreApplication.translate('cqcad', "File")
@@ -137,20 +131,20 @@ class CQCADGui(QMainWindow):
         exitAct.setStatusTip(exitTip)
         exitAct.triggered.connect(qApp.quit)
 
-        newProjAct = QAction('&' + nProjName, self)
-        # newProjAct.setShortcut('Ctrl+Q')
-        newProjAct.setStatusTip(nProjTip)
-        newProjAct.triggered.connect(self.notImplemented)
+        newAct = QAction('&' + newName, self)
+        # newAct.setShortcut('Ctrl+Q')
+        newAct.setStatusTip(newTip)
+        newAct.triggered.connect(self.notImplemented)
 
-        openProjAct = QAction('&' + oProjName, self)
-        # openProjAct.setShortcut('Ctrl+Q')
-        openProjAct.setStatusTip(oProjTip)
-        openProjAct.triggered.connect(self.notImplemented)
+        openAct = QAction('&' + openName, self)
+        # openAct.setShortcut('Ctrl+Q')
+        openAct.setStatusTip(openTip)
+        openAct.triggered.connect(self.notImplemented)
 
-        closeProjAct = QAction('&' + cProjName, self)
-        # closeProjAct.setShortcut('Ctrl+Q')
-        closeProjAct.setStatusTip(cProjTip)
-        closeProjAct.triggered.connect(self.notImplemented)
+        closeAct = QAction('&' + closeName, self)
+        # closeAct.setShortcut('Ctrl+Q')
+        closeAct.setStatusTip(closeTip)
+        closeAct.triggered.connect(self.notImplemented)
 
         importAct = QAction('&' + impName, self)
         # importAct.setShortcut('Ctrl+Q')
@@ -185,23 +179,16 @@ class CQCADGui(QMainWindow):
         self.mouse1stAct = QAction('&' + m1stName, self, checkable=True)
         # self.mouse1stAct.setShortcut('F6')
         self.mouse1stAct.setStatusTip(m1stTip)
-        self.mouse1stAct.setChecked(True)
+        self.mouse1stAct.setChecked(False)
         self.mouse1stAct.setObjectName('mouse_first')
         self.mouse1stAct.triggered.connect(self.switchModes)
 
         self.script1stAct = QAction('&' + s1stName, self, checkable=True)
         # self.script1stAct.setShortcut('F6')
         self.script1stAct.setStatusTip(s1stTip)
-        self.script1stAct.setChecked(False)
+        self.script1stAct.setChecked(True)
         self.script1stAct.setObjectName('script_first')
         self.script1stAct.triggered.connect(self.switchModes)
-
-        self.genAct = QAction('&' + genName, self, checkable=True)
-        # self.genAct.setShortcut('F6')
-        self.genAct.setStatusTip(genTip)
-        self.genAct.setChecked(False)
-        self.genAct.setObjectName('generative')
-        self.genAct.triggered.connect(self.switchModes)
 
         paramsAct = QAction('&' + pEdName, self, checkable=True)
         # paramsAct.setShortcut('F6')
@@ -224,10 +211,15 @@ class CQCADGui(QMainWindow):
         pythonAct.setObjectName('python_console')
         pythonAct.triggered.connect(self.notImplemented)
 
-        extrasAct = QAction('&' + extrasName, self)
-        # extrasAct.setShortcut('F6')
-        extrasAct.setStatusTip(extrastip)
-        extrasAct.triggered.connect(self.notImplemented)
+        libsAct = QAction('&' + libsName, self)
+        # libsAct.setShortcut('F6')
+        libsAct.setStatusTip(libsTip)
+        libsAct.triggered.connect(self.notImplemented)
+
+        extsAct = QAction('&' + extsName, self)
+        # extsAct.setShortcut('F6')
+        extsAct.setStatusTip(extsTip)
+        extsAct.triggered.connect(self.notImplemented)
 
         settingsAct = QAction('&' + setsName, self)
         # settingsAct.setShortcut('F6')
@@ -236,9 +228,9 @@ class CQCADGui(QMainWindow):
 
         menubar = self.menuBar()
         self.fileMenu = menubar.addMenu('&' + fileName)
-        self.fileMenu.addAction(newProjAct)
-        self.fileMenu.addAction(openProjAct)
-        self.fileMenu.addAction(closeProjAct)
+        self.fileMenu.addAction(newAct)
+        self.fileMenu.addAction(openAct)
+        self.fileMenu.addAction(closeAct)
         self.recentMenu = QMenu(rcntName, self)
         self.fileMenu.addMenu(self.recentMenu)
         self.examplesMenu = QMenu(exName, self)
@@ -249,14 +241,14 @@ class CQCADGui(QMainWindow):
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(exitAct)
         editMenu = menubar.addMenu('&' + editName)
-        editMenu.addAction(extrasAct)
+        editMenu.addAction(libsAct)
+        editMenu.addAction(extsAct)
         editMenu.addAction(settingsAct)
         viewMenu = menubar.addMenu('&' + viewName)
         modesMenu = QMenu(modesName, self)
         viewMenu.addMenu(modesMenu)
         modesMenu.addAction(self.mouse1stAct)
         modesMenu.addAction(self.script1stAct)
-        modesMenu.addAction(self.genAct)
         panelsMenu = QMenu(panelsName, self)
         panelsMenu.addAction(paramsAct)
         panelsMenu.addAction(objectAct)
@@ -287,7 +279,7 @@ class CQCADGui(QMainWindow):
         # d.setWindowModality(Qt.ApplicationModal)
         d.exec_()
 
-        # TODO: Init with keybindings, execute_on_save, use_external_editor, max_line_length settings, line_numbers
+        # TODO: Init with keybindings, execute_on_save, use_external_editor, max_line_length settings, line_numbers, cad_engine
 
 
 def main():
