@@ -11,10 +11,11 @@ License: LGPL 3.0
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QTextEdit
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
 from _version import __version__
+from components.CodeEdit import CodeEdit
 
 
 class CQCADGui(QMainWindow):
@@ -357,14 +358,9 @@ class CQCADGui(QMainWindow):
         self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setCentralWidget(self.mdiArea)
 
-        child = QTextEdit()
+        # For now, default to opening a script editor
+        child = CodeEdit()
         self.mdiArea.addSubWindow(child)
-
-        # # Create a central Widgets
-        # centralWidget = QtGui.QWidget()
-        #
-        # # Create a Layout for the central Widget
-        # centralLayout = QtGui.QHBoxLayout()
 
         self.showMaximized()
 
