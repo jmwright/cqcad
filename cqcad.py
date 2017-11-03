@@ -11,8 +11,9 @@ License: LGPL 3.0
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QTextEdit
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtCore import Qt
 from _version import __version__
 
 
@@ -104,6 +105,7 @@ class CQCADGui(QMainWindow):
         viewerTip = QtCore.QCoreApplication.translate('cqcad', "Object viewer")
         conName = QtCore.QCoreApplication.translate('cqcad', "Console")
         conTip = QtCore.QCoreApplication.translate('cqcad', "Console")
+        dockName = QtCore.QCoreApplication.translate('cqcad', "Dock")
         libsName = QtCore.QCoreApplication.translate('cqcad', "Collections")
         libsTip = QtCore.QCoreApplication.translate('cqcad', "Collections")
         extsName = QtCore.QCoreApplication.translate('cqcad', "Extensions")
@@ -119,6 +121,22 @@ class CQCADGui(QMainWindow):
         panelsName = QtCore.QCoreApplication.translate('cqcad', "Panels")
         scriptName = QtCore.QCoreApplication.translate('cqcad', "Script")
         helpName = QtCore.QCoreApplication.translate('cqcad', "Help")
+        axioViewName = QtCore.QCoreApplication.translate('cqcad', "Axiometric View")
+        axioViewTip = QtCore.QCoreApplication.translate('cqcad', "Axiometric View")
+        frontViewName = QtCore.QCoreApplication.translate('cqcad', "Front View")
+        frontViewTip = QtCore.QCoreApplication.translate('cqcad', "Front View")
+        backViewName = QtCore.QCoreApplication.translate('cqcad', "Back View")
+        backViewTip = QtCore.QCoreApplication.translate('cqcad', "Back View")
+        topViewName = QtCore.QCoreApplication.translate('cqcad', "Top View")
+        topViewTip = QtCore.QCoreApplication.translate('cqcad', "Top View")
+        bottomViewName = QtCore.QCoreApplication.translate('cqcad', "Bottom View")
+        bottomViewTip = QtCore.QCoreApplication.translate('cqcad', "Bottom View")
+        leftViewName = QtCore.QCoreApplication.translate('cqcad', "Left View")
+        leftViewTip = QtCore.QCoreApplication.translate('cqcad', "Left View")
+        rightViewName = QtCore.QCoreApplication.translate('cqcad', "Right View")
+        rightViewTip = QtCore.QCoreApplication.translate('cqcad', "Right View")
+        fitAllName = QtCore.QCoreApplication.translate('cqcad', "Fit All")
+        fitAllTip = QtCore.QCoreApplication.translate('cqcad', "Fit All")
 
         self.setGeometry(300, 300, 250, 150)
         self.setWindowTitle('CQCad')
@@ -211,6 +229,13 @@ class CQCADGui(QMainWindow):
         pythonAct.setObjectName('python_console')
         pythonAct.triggered.connect(self.notImplemented)
 
+        # Start here and link the dock view menu items with the visibility of the dock
+        dockAct = QAction('&' + dockName, self, checkable=True)
+        dockAct.setStatusTip(conTip)
+        dockAct.setChecked(True)
+        dockAct.setObjectName('dock_panel')
+        dockAct.triggered.connect(self.notImplemented)
+
         libsAct = QAction('&' + libsName, self)
         # libsAct.setShortcut('F6')
         libsAct.setStatusTip(libsTip)
@@ -220,6 +245,46 @@ class CQCADGui(QMainWindow):
         # extsAct.setShortcut('F6')
         extsAct.setStatusTip(extsTip)
         extsAct.triggered.connect(self.notImplemented)
+
+        frontViewAct = QAction(QIcon('content/images/front_view.svg'), '&' + frontViewName, self)
+        frontViewAct.setShortcut('1')
+        frontViewAct.setStatusTip(frontViewTip)
+        frontViewAct.triggered.connect(self.notImplemented)
+
+        backViewAct = QAction(QIcon('content/images/back_view.svg'), '&' + backViewName, self)
+        backViewAct.setShortcut('2')
+        backViewAct.setStatusTip(backViewTip)
+        backViewAct.triggered.connect(self.notImplemented)
+
+        topViewAct = QAction(QIcon('content/images/top_view.svg'), '&' + topViewName, self)
+        topViewAct.setShortcut('3')
+        topViewAct.setStatusTip(topViewTip)
+        topViewAct.triggered.connect(self.notImplemented)
+
+        bottomViewAct = QAction(QIcon('content/images/bottom_view.svg'), '&' + bottomViewName, self)
+        bottomViewAct.setShortcut('4')
+        bottomViewAct.setStatusTip(bottomViewTip)
+        bottomViewAct.triggered.connect(self.notImplemented)
+
+        leftViewAct = QAction(QIcon('content/images/left_side_view.svg'), '&' + leftViewName, self)
+        leftViewAct.setShortcut('5')
+        leftViewAct.setStatusTip(leftViewTip)
+        leftViewAct.triggered.connect(self.notImplemented)
+
+        rightViewAct = QAction(QIcon('content/images/right_side_view.svg'), '&' + rightViewName, self)
+        rightViewAct.setShortcut('6')
+        rightViewAct.setStatusTip(rightViewTip)
+        rightViewAct.triggered.connect(self.notImplemented)
+
+        axioViewAct = QAction(QIcon('content/images/axiometric_view.svg'), '&' + axioViewName, self)
+        axioViewAct.setShortcut('0')
+        axioViewAct.setStatusTip(axioViewTip)
+        axioViewAct.triggered.connect(self.notImplemented)
+
+        fitAllAct = QAction(QIcon('content/images/fit_all.svg'), '&' + fitAllName, self)
+        # fitAllAct.setShortcut('6')
+        fitAllAct.setStatusTip(fitAllTip)
+        fitAllAct.triggered.connect(self.notImplemented)
 
         settingsAct = QAction('&' + setsName, self)
         # settingsAct.setShortcut('F6')
@@ -253,6 +318,7 @@ class CQCADGui(QMainWindow):
         panelsMenu.addAction(paramsAct)
         panelsMenu.addAction(objectAct)
         panelsMenu.addAction(pythonAct)
+        panelsMenu.addAction(dockAct)
         viewMenu.addMenu(panelsMenu)
         # projMenu = menubar.addMenu('&Project')
         scriptMenu = menubar.addMenu('&' + scriptName)
@@ -261,6 +327,38 @@ class CQCADGui(QMainWindow):
         scriptMenu.addAction(validAct)
         helpMenu = menubar.addMenu('&' + helpName)
         helpMenu.addAction(aboutAct)
+
+        # The CadQuery logo
+        logoLabel = QLabel()
+        logoLabel.setPixmap(QPixmap('content/images/cadquery_logo.svg'))
+
+        # Toolbar for CAD controls and extension controls
+        self.toolbar = self.addToolBar('Main Tools')
+        self.toolbar.addWidget(logoLabel)
+        self.toolbar.addAction(execAct)
+        self.toolbar.addAction(debugAct)
+        self.toolbar.addAction(validAct)
+        self.toolbar.addAction(frontViewAct)
+        self.toolbar.addAction(backViewAct)
+        self.toolbar.addAction(topViewAct)
+        self.toolbar.addAction(bottomViewAct)
+        self.toolbar.addAction(leftViewAct)
+        self.toolbar.addAction(rightViewAct)
+        self.toolbar.addAction(axioViewAct)
+        self.toolbar.addAction(fitAllAct)
+
+        # Side dock for things like the object viewer
+        self.dock = QDockWidget("Dock", self)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.dock)
+
+        # The central MDI window area
+        self.mdiArea = QMdiArea()
+        self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setCentralWidget(self.mdiArea)
+
+        child = QTextEdit()
+        self.mdiArea.addSubWindow(child)
 
         # # Create a central Widgets
         # centralWidget = QtGui.QWidget()
