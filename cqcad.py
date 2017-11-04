@@ -13,13 +13,14 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSettings
 from _version import __version__
 from components.CodeEdit import CodeEdit
 
 
 class CQCADGui(QMainWindow):
-    settings = QtCore.QSettings('cqcad', 'cqcad')       # Platform independent application settings
+    settings = QSettings('cqcad', 'settings')       # Platform independent application settings
+    guiState = QSettings('cqcad', 'gui')  # Platform independent application settings
     script1stAct = None
     mouse1stAct = None
     fileMenu = None             # The File menu
@@ -30,6 +31,19 @@ class CQCADGui(QMainWindow):
         super(CQCADGui, self).__init__()
 
         self.initUI()
+
+
+    def closeEvent(self, event):
+        """
+        Allows us to clean up after ourselves and make sure that everything is
+        saved that the user intended to save.
+
+        :param event: Object describing this event
+        :return: None
+        """
+
+        self.guiState.sync()
+        self.settings.sync()
 
 
     def clickAbout(self):
@@ -72,6 +86,51 @@ class CQCADGui(QMainWindow):
             self.script1stAct.setChecked(False)
         elif sending_button.objectName() == 'script_first':
             self.mouse1stAct.setChecked(False)
+
+
+    def toggleDock(self):
+        """
+        Toggles the dock widgets visibility when the menu item is clicked.
+
+        :return: None
+        """
+        if self.dock.isVisible() == True:
+            self.dock.hide()
+            self.dockAct.setChecked(False)
+
+            # Keep track of the state of the GUI for the user
+            self.guiState.setValue('dock_visible', False)
+        else:
+            self.dock.show()
+            self.dockAct.setChecked(True)
+
+            # Keep track of the state of the GUI for the user
+            self.guiState.setValue('dock_visible', True)
+
+        self.guiState.sync()
+
+
+    def uncheckDockMenu(self):
+        """
+        Unchecks the dock menu item if the dock widget is closed manually.
+
+        :return: None
+        """
+        if not self.dock.isVisible():
+            self.dockAct.setChecked(False)
+
+            # Keep track of the state of the GUI for the user
+            self.guiState.setValue('dock_visible', False)
+
+    def setInitialDockState(self):
+        dockState = self.guiState.value('dock_visible', type=bool)
+
+        if dockState:
+            self.dock.show()
+            self.dockAct.setChecked(True)
+        else:
+            self.dock.hide()
+            self.dockAct.setChecked(False)
 
 
     def initUI(self):
@@ -190,7 +249,7 @@ class CQCADGui(QMainWindow):
         debugAct.setStatusTip(dbgTip)
         debugAct.triggered.connect(self.notImplemented)
 
-        validAct = QAction(QIcon('content/images/Material/ic_check_circle_24px.svg'), '&' + validName, self)
+        validAct = QAction(QIcon('content/images/Material/ic_check_black_24px.svg'), '&' + validName, self)
         validAct.setShortcut('F6')
         validAct.setStatusTip(validTip)
         validAct.triggered.connect(self.notImplemented)
@@ -231,11 +290,11 @@ class CQCADGui(QMainWindow):
         pythonAct.triggered.connect(self.notImplemented)
 
         # Start here and link the dock view menu items with the visibility of the dock
-        dockAct = QAction('&' + dockName, self, checkable=True)
-        dockAct.setStatusTip(conTip)
-        dockAct.setChecked(True)
-        dockAct.setObjectName('dock_panel')
-        dockAct.triggered.connect(self.notImplemented)
+        self.dockAct = QAction('&' + dockName, self, checkable=True)
+        self.dockAct.setStatusTip(conTip)
+        self.dockAct.setChecked(True)
+        self.dockAct.setObjectName('dock_panel')
+        self.dockAct.triggered.connect(self.toggleDock)
 
         libsAct = QAction('&' + libsName, self)
         # libsAct.setShortcut('F6')
@@ -319,7 +378,7 @@ class CQCADGui(QMainWindow):
         panelsMenu.addAction(paramsAct)
         panelsMenu.addAction(objectAct)
         panelsMenu.addAction(pythonAct)
-        panelsMenu.addAction(dockAct)
+        panelsMenu.addAction(self.dockAct)
         viewMenu.addMenu(panelsMenu)
         # projMenu = menubar.addMenu('&Project')
         scriptMenu = menubar.addMenu('&' + scriptName)
@@ -351,6 +410,9 @@ class CQCADGui(QMainWindow):
         # Side dock for things like the object viewer
         self.dock = QDockWidget("Dock", self)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dock)
+        self.dock.visibilityChanged.connect(self.uncheckDockMenu)
+        self.dock.setMinimumSize(200, 100);
+        self.setInitialDockState()
 
         # The central MDI window area
         self.mdiArea = QMdiArea()
@@ -360,7 +422,9 @@ class CQCADGui(QMainWindow):
 
         # For now, default to opening a script editor
         child = CodeEdit()
+        self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
         self.mdiArea.addSubWindow(child)
+        child.setWindowState(QtCore.Qt.WindowMaximized)
 
         self.showMaximized()
 
