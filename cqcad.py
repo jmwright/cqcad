@@ -179,6 +179,8 @@ class CQCADGui(QMainWindow):
         viewName = QtCore.QCoreApplication.translate('cqcad', "View")
         modesName = QtCore.QCoreApplication.translate('cqcad', "Modes")
         panelsName = QtCore.QCoreApplication.translate('cqcad', "Panels")
+        layoutMenuName = QtCore.QCoreApplication.translate('cqcad', "Layout")
+        layoutMenuTip = QtCore.QCoreApplication.translate('cqcad', "Layout")
         scriptName = QtCore.QCoreApplication.translate('cqcad', "Script")
         helpName = QtCore.QCoreApplication.translate('cqcad', "Help")
         axioViewName = QtCore.QCoreApplication.translate('cqcad', "Axiometric View")
@@ -197,6 +199,12 @@ class CQCADGui(QMainWindow):
         rightViewTip = QtCore.QCoreApplication.translate('cqcad', "Right View")
         fitAllName = QtCore.QCoreApplication.translate('cqcad', "Fit All")
         fitAllTip = QtCore.QCoreApplication.translate('cqcad', "Fit All")
+        hTileName = QtCore.QCoreApplication.translate('cqcad', "Horizontal Tile")
+        hTileTip = QtCore.QCoreApplication.translate('cqcad', "Horizontal Tile")
+        vTileName = QtCore.QCoreApplication.translate('cqcad', "Vertical Tile")
+        vTileTip = QtCore.QCoreApplication.translate('cqcad', "Vertical Tile")
+        scriptTripleName = QtCore.QCoreApplication.translate('cqcad', "Script Triple")
+        scriptTripleTip = QtCore.QCoreApplication.translate('cqcad', "Script Triple")
 
         self.setGeometry(300, 300, 250, 150)
         self.setWindowTitle('CQCad')
@@ -289,12 +297,29 @@ class CQCADGui(QMainWindow):
         pythonAct.setObjectName('python_console')
         pythonAct.triggered.connect(self.notImplemented)
 
-        # Start here and link the dock view menu items with the visibility of the dock
         self.dockAct = QAction('&' + dockName, self, checkable=True)
-        self.dockAct.setStatusTip(conTip)
+        self.dockAct.setStatusTip(dockName)
         self.dockAct.setChecked(True)
         self.dockAct.setObjectName('dock_panel')
         self.dockAct.triggered.connect(self.toggleDock)
+
+        self.hTileAct = QAction('&' + hTileName, self)
+        self.hTileAct.setStatusTip(hTileTip)
+        # self.hTileAct.setChecked(True)
+        # self.hTileAct.setObjectName('dock_panel')
+        self.hTileAct.triggered.connect(self.notImplemented)
+
+        self.vTileAct = QAction('&' + vTileName, self)
+        self.vTileAct.setStatusTip(vTileTip)
+        # self.vTileAct.setChecked(True)
+        # self.vTileAct.setObjectName('dock_panel')
+        self.vTileAct.triggered.connect(self.notImplemented)
+
+        self.scriptTripleAct = QAction('&' + scriptTripleName, self)
+        self.scriptTripleAct.setStatusTip(scriptTripleTip)
+        # self.scriptTripleAct.setChecked(True)
+        # self.scriptTripleAct.setObjectName('dock_panel')
+        self.scriptTripleAct.triggered.connect(self.notImplemented)
 
         libsAct = QAction('&' + libsName, self)
         # libsAct.setShortcut('F6')
@@ -380,6 +405,11 @@ class CQCADGui(QMainWindow):
         panelsMenu.addAction(pythonAct)
         panelsMenu.addAction(self.dockAct)
         viewMenu.addMenu(panelsMenu)
+        self.layoutMenu = QMenu(layoutMenuName)
+        self.layoutMenu.addAction(self.hTileAct)
+        self.layoutMenu.addAction(self.vTileAct)
+        self.layoutMenu.addAction(self.scriptTripleAct)
+        viewMenu.addMenu(self.layoutMenu)
         # projMenu = menubar.addMenu('&Project')
         scriptMenu = menubar.addMenu('&' + scriptName)
         scriptMenu.addAction(execAct)
@@ -411,7 +441,7 @@ class CQCADGui(QMainWindow):
         self.dock = QDockWidget("Dock", self)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dock)
         self.dock.visibilityChanged.connect(self.uncheckDockMenu)
-        self.dock.setMinimumSize(200, 100);
+        self.dock.setMinimumSize(200, 100)
         self.setInitialDockState()
 
         # The central MDI window area
