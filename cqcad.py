@@ -11,21 +11,17 @@ License: LGPL 3.0
 
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSettings
 from _version import __version__
 from components.CodeEdit import CodeEdit
+from components.DockWidget import DockWidget
 
 
 class CQCADGui(QMainWindow):
     settings = QSettings('cqcad', 'settings')       # Platform independent application settings
     guiState = QSettings('cqcad', 'gui')  # Platform independent application settings
-    script1stAct = None
-    mouse1stAct = None
-    fileMenu = None             # The File menu
-    recentMenu = None           # The recent scripts submenu
-    examplesMenu = None         # The examples submenu
 
     def __init__(self):
         super(CQCADGui, self).__init__()
@@ -116,11 +112,10 @@ class CQCADGui(QMainWindow):
 
         :return: None
         """
-        if not self.dock.isVisible():
-            self.dockAct.setChecked(False)
+        self.dockAct.setChecked(False)
 
-            # Keep track of the state of the GUI for the user
-            self.guiState.setValue('dock_visible', False)
+        # Keep track of the state of the GUI for the user
+        self.guiState.setValue('dock_visible', False)
 
     def setInitialDockState(self):
         dockState = self.guiState.value('dock_visible', type=bool)
@@ -170,6 +165,8 @@ class CQCADGui(QMainWindow):
         libsTip = QtCore.QCoreApplication.translate('cqcad', "Collections")
         extsName = QtCore.QCoreApplication.translate('cqcad', "Extensions")
         extsTip = QtCore.QCoreApplication.translate('cqcad', "Extensions")
+        layoutsName = QtCore.QCoreApplication.translate('cqcad', "Layouts")
+        layoutsTip = QtCore.QCoreApplication.translate('cqcad', "Layouts")
         setsName = QtCore.QCoreApplication.translate('cqcad', "Settings")
         setsTip = QtCore.QCoreApplication.translate('cqcad', "Settings")
         fileName = QtCore.QCoreApplication.translate('cqcad', "File")
@@ -205,6 +202,14 @@ class CQCADGui(QMainWindow):
         vTileTip = QtCore.QCoreApplication.translate('cqcad', "Vertical Tile")
         scriptTripleName = QtCore.QCoreApplication.translate('cqcad', "Script Triple")
         scriptTripleTip = QtCore.QCoreApplication.translate('cqcad', "Script Triple")
+        docsName = QtCore.QCoreApplication.translate('cqcad', "Documentation")
+        docsTip = QtCore.QCoreApplication.translate('cqcad', "Documentation")
+        vidsName = QtCore.QCoreApplication.translate('cqcad', "Video Tutorials")
+        vidsTip = QtCore.QCoreApplication.translate('cqcad', "Video Tutorials")
+        uGroupName = QtCore.QCoreApplication.translate('cqcad', "User Group")
+        uGroupTip = QtCore.QCoreApplication.translate('cqcad', "User Group")
+        extsToolName = QtCore.QCoreApplication.translate('cqcad', "Extensions")
+        extsToolTip = QtCore.QCoreApplication.translate('cqcad', "Extensions")
 
         self.setGeometry(300, 300, 250, 150)
         self.setWindowTitle('CQCad')
@@ -241,11 +246,6 @@ class CQCADGui(QMainWindow):
         # exportAct.setShortcut('Ctrl+Q')
         exportAct.setStatusTip(expTip)
         exportAct.triggered.connect(self.notImplemented)
-
-        aboutAct = QAction(QIcon('content/images/Material/ic_help_24px.svg'), '&' + abtName, self)
-        aboutAct.setShortcut('F1')
-        aboutAct.setStatusTip(abtTip)
-        aboutAct.triggered.connect(self.clickAbout)
 
         execAct = QAction(QIcon('content/images/Material/ic_play_arrow_24px.svg'), '&' + execName, self)
         execAct.setShortcut('F2')
@@ -331,6 +331,11 @@ class CQCADGui(QMainWindow):
         extsAct.setStatusTip(extsTip)
         extsAct.triggered.connect(self.notImplemented)
 
+        layoutsAct = QAction('&' + layoutsName, self)
+        # layoutsAct.setShortcut('F6')
+        layoutsAct.setStatusTip(layoutsTip)
+        layoutsAct.triggered.connect(self.notImplemented)
+
         frontViewAct = QAction(QIcon('content/images/front_view.svg'), '&' + frontViewName, self)
         frontViewAct.setShortcut('1')
         frontViewAct.setStatusTip(frontViewTip)
@@ -376,6 +381,31 @@ class CQCADGui(QMainWindow):
         settingsAct.setStatusTip(setsTip)
         settingsAct.triggered.connect(self.showSettingsDialog)
 
+        docsAct = QAction('&' + docsName, self)
+        # docsAct.setShortcut('F1')
+        docsAct.setStatusTip(docsTip)
+        docsAct.triggered.connect(self.notImplemented)
+
+        vidsAct = QAction('&' + vidsName, self)
+        # vidsAct.setShortcut('F1')
+        vidsAct.setStatusTip(vidsTip)
+        vidsAct.triggered.connect(self.notImplemented)
+
+        uGroupAct = QAction('&' + uGroupName, self)
+        # uGroupAct.setShortcut('F1')
+        uGroupAct.setStatusTip(uGroupTip)
+        uGroupAct.triggered.connect(self.notImplemented)
+
+        aboutAct = QAction(QIcon('content/images/Material/ic_help_24px.svg'), '&' + abtName, self)
+        aboutAct.setShortcut('F1')
+        aboutAct.setStatusTip(abtTip)
+        aboutAct.triggered.connect(self.clickAbout)
+
+        extsToolAct = QAction(QIcon('content/images/Material/ic_extension_black_24px.svg'), '&' + extsToolName, self)
+        # extsToolAct.setShortcut('F1')
+        extsToolAct.setStatusTip(extsToolTip)
+        extsToolAct.triggered.connect(self.notImplemented)
+
         menubar = self.menuBar()
         self.fileMenu = menubar.addMenu('&' + fileName)
         self.fileMenu.addAction(newAct)
@@ -393,6 +423,7 @@ class CQCADGui(QMainWindow):
         editMenu = menubar.addMenu('&' + editName)
         editMenu.addAction(libsAct)
         editMenu.addAction(extsAct)
+        editMenu.addAction(layoutsAct)
         editMenu.addAction(settingsAct)
         viewMenu = menubar.addMenu('&' + viewName)
         modesMenu = QMenu(modesName, self)
@@ -416,6 +447,9 @@ class CQCADGui(QMainWindow):
         scriptMenu.addAction(debugAct)
         scriptMenu.addAction(validAct)
         helpMenu = menubar.addMenu('&' + helpName)
+        helpMenu.addAction(docsAct)
+        helpMenu.addAction(vidsAct)
+        helpMenu.addAction(uGroupAct)
         helpMenu.addAction(aboutAct)
 
         # The CadQuery logo
@@ -437,10 +471,15 @@ class CQCADGui(QMainWindow):
         self.toolbar.addAction(axioViewAct)
         self.toolbar.addAction(fitAllAct)
 
+        # Add the extensions dropdown at the right side of the toolbar
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolbar.addWidget(spacer)
+        self.toolbar.addAction(extsToolAct)
+
         # Side dock for things like the object viewer
-        self.dock = QDockWidget("Dock", self)
+        self.dock = DockWidget(self)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dock)
-        self.dock.visibilityChanged.connect(self.uncheckDockMenu)
         self.dock.setMinimumSize(200, 100)
         self.setInitialDockState()
 

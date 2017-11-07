@@ -1,17 +1,9 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-Python console for CQCad
-
-License: LGPL 3.0
-"""
 from code import InteractiveConsole
 
 
 class Console(InteractiveConsole):
-    def __init__(self):
-        super(Console, self).__init__()
+    def __init__(self, parent):
+        super(Console, self).__init__(parent)
 
         self.initUI()
 
