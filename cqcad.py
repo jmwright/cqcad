@@ -8,8 +8,6 @@ Sets up the CQCad GUI for use - Pulls settings and populates menus.
 
 License: LGPL 3.0
 """
-
-# import imp
 import sys
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -22,8 +20,9 @@ from components.DockWidget import DockWidget
 
 
 class CQCADGui(QMainWindow):
-    settings = QSettings('cqcad', 'settings')       # Platform independent application settings
-    guiState = QSettings('cqcad', 'gui')  # Platform independent application settings
+    # Platform independent application settings
+    settings = QSettings('cqcad', 'settings')
+    guiState = QSettings('cqcad', 'gui')
 
     def __init__(self):
         super(CQCADGui, self).__init__()
@@ -227,12 +226,6 @@ class CQCADGui(QMainWindow):
         rightViewTip = QtCore.QCoreApplication.translate('cqcad', "Right View")
         fitAllName = QtCore.QCoreApplication.translate('cqcad', "Fit All")
         fitAllTip = QtCore.QCoreApplication.translate('cqcad', "Fit All")
-        hTileName = QtCore.QCoreApplication.translate('cqcad', "Horizontal Tile")
-        hTileTip = QtCore.QCoreApplication.translate('cqcad', "Horizontal Tile")
-        vTileName = QtCore.QCoreApplication.translate('cqcad', "Vertical Tile")
-        vTileTip = QtCore.QCoreApplication.translate('cqcad', "Vertical Tile")
-        scriptTripleName = QtCore.QCoreApplication.translate('cqcad', "Script Triple")
-        scriptTripleTip = QtCore.QCoreApplication.translate('cqcad', "Script Triple")
         docsName = QtCore.QCoreApplication.translate('cqcad', "Documentation")
         docsTip = QtCore.QCoreApplication.translate('cqcad', "Documentation")
         vidsName = QtCore.QCoreApplication.translate('cqcad', "Video Tutorials")
@@ -333,24 +326,6 @@ class CQCADGui(QMainWindow):
         self.dockAct.setChecked(True)
         self.dockAct.setObjectName('dock_panel')
         self.dockAct.triggered.connect(self.toggleDock)
-
-        # self.hTileAct = QAction('&' + hTileName, self)
-        # self.hTileAct.setStatusTip(hTileTip)
-        # # self.hTileAct.setChecked(True)
-        # # self.hTileAct.setObjectName('dock_panel')
-        # self.hTileAct.triggered.connect(self.notImplemented)
-        #
-        # self.vTileAct = QAction('&' + vTileName, self)
-        # self.vTileAct.setStatusTip(vTileTip)
-        # # self.vTileAct.setChecked(True)
-        # # self.vTileAct.setObjectName('dock_panel')
-        # self.vTileAct.triggered.connect(self.notImplemented)
-        #
-        # self.scriptTripleAct = QAction('&' + scriptTripleName, self)
-        # self.scriptTripleAct.setStatusTip(scriptTripleTip)
-        # # self.scriptTripleAct.setChecked(True)
-        # # self.scriptTripleAct.setObjectName('dock_panel')
-        # self.scriptTripleAct.triggered.connect(self.notImplemented)
 
         libsAct = QAction('&' + libsName, self)
         # libsAct.setShortcut('F6')
@@ -468,9 +443,6 @@ class CQCADGui(QMainWindow):
         panelsMenu.addAction(self.dockAct)
         viewMenu.addMenu(panelsMenu)
         self.layoutMenu = QMenu(layoutMenuName)
-        # self.layoutMenu.addAction(self.hTileAct)
-        # self.layoutMenu.addAction(self.vTileAct)
-        # self.layoutMenu.addAction(self.scriptTripleAct)
         viewMenu.addMenu(self.layoutMenu)
         # projMenu = menubar.addMenu('&Project')
         scriptMenu = menubar.addMenu('&' + scriptName)
@@ -483,7 +455,7 @@ class CQCADGui(QMainWindow):
         helpMenu.addAction(uGroupAct)
         helpMenu.addAction(aboutAct)
 
-        # Load layouts
+        # Load layouts dynamically
         (layouts, self.funcs) = self.getLayouts()
         for layout in layouts:
             act = QAction('&' + layout, self)
