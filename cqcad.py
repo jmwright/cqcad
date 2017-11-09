@@ -150,6 +150,22 @@ class CQCADGui(QMainWindow):
 
         return (titles, functions)
 
+    def loadExtensions(self):
+        """
+        Finds all of the extensions that are installed and instantiates them.
+        :return: None
+        """
+        module_base_path = os.path.dirname(__file__)
+        layouts_path = os.path.join(module_base_path, 'extensions')
+
+        # Load all the extensions and for now tell them to run their setup function to make changes to the GUI
+        for module in os.listdir(layouts_path):
+            if module.endswith('.py') and module != "__init__.py":
+                baseName = os.path.splitext(module)[0]
+                name = "extensions." + baseName
+                mod = __import__(name, fromlist=[baseName])
+                mod.setup(self)
+
     def fireFunction(self):
         """
         Allows us to fire dynamically loaded functions while avoiding a mess
@@ -174,12 +190,6 @@ class CQCADGui(QMainWindow):
         expTip = QtCore.QCoreApplication.translate('cqcad', "Export")
         abtName = QtCore.QCoreApplication.translate('cqcad', "About")
         abtTip = QtCore.QCoreApplication.translate('cqcad', "About")
-        execName = QtCore.QCoreApplication.translate('cqcad', "Execute")
-        execTip = QtCore.QCoreApplication.translate('cqcad', "Execute script")
-        dbgName = QtCore.QCoreApplication.translate('cqcad', "Debug")
-        dbgTip = QtCore.QCoreApplication.translate('cqcad', "Debug script")
-        validName = QtCore.QCoreApplication.translate('cqcad', "Validate")
-        validTip = QtCore.QCoreApplication.translate('cqcad', "Validate script")
         m1stName = QtCore.QCoreApplication.translate('cqcad', "Mouse First (Experimental)")
         m1stTip = QtCore.QCoreApplication.translate('cqcad', "Mouse first (experimental)")
         s1stName = QtCore.QCoreApplication.translate('cqcad', "Script First")
@@ -208,7 +218,6 @@ class CQCADGui(QMainWindow):
         panelsName = QtCore.QCoreApplication.translate('cqcad', "Panels")
         layoutMenuName = QtCore.QCoreApplication.translate('cqcad', "Layout")
         layoutMenuTip = QtCore.QCoreApplication.translate('cqcad', "Layout")
-        scriptName = QtCore.QCoreApplication.translate('cqcad', "Script")
         helpName = QtCore.QCoreApplication.translate('cqcad', "Help")
         axioViewName = QtCore.QCoreApplication.translate('cqcad', "Axiometric View")
         axioViewTip = QtCore.QCoreApplication.translate('cqcad', "Axiometric View")
@@ -270,21 +279,6 @@ class CQCADGui(QMainWindow):
         # exportAct.setShortcut('Ctrl+Q')
         exportAct.setStatusTip(expTip)
         exportAct.triggered.connect(self.notImplemented)
-
-        execAct = QAction(QIcon('content/images/Material/ic_play_arrow_24px.svg'), '&' + execName, self)
-        execAct.setShortcut('F2')
-        execAct.setStatusTip(execTip)
-        execAct.triggered.connect(self.notImplemented)
-
-        debugAct = QAction(QIcon('content/images/Material/ic_bug_report_24px.svg'), '&' + dbgName, self)
-        debugAct.setShortcut('F5')
-        debugAct.setStatusTip(dbgTip)
-        debugAct.triggered.connect(self.notImplemented)
-
-        validAct = QAction(QIcon('content/images/Material/ic_check_black_24px.svg'), '&' + validName, self)
-        validAct.setShortcut('F6')
-        validAct.setStatusTip(validTip)
-        validAct.triggered.connect(self.notImplemented)
 
         self.mouse1stAct = QAction('&' + m1stName, self, checkable=True)
         # self.mouse1stAct.setShortcut('F6')
@@ -412,8 +406,8 @@ class CQCADGui(QMainWindow):
         extsToolAct.setStatusTip(extsToolTip)
         extsToolAct.triggered.connect(self.notImplemented)
 
-        menubar = self.menuBar()
-        self.fileMenu = menubar.addMenu('&' + fileName)
+        self.menubar = self.menuBar()
+        self.fileMenu = self.menubar.addMenu('&' + fileName)
         self.fileMenu.addAction(newAct)
         self.fileMenu.addAction(openAct)
         self.fileMenu.addAction(closeAct)
@@ -426,12 +420,12 @@ class CQCADGui(QMainWindow):
         self.fileMenu.addAction(exportAct)
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(exitAct)
-        editMenu = menubar.addMenu('&' + editName)
+        editMenu = self.menubar.addMenu('&' + editName)
         editMenu.addAction(libsAct)
         editMenu.addAction(extsAct)
         editMenu.addAction(layoutsAct)
         editMenu.addAction(settingsAct)
-        viewMenu = menubar.addMenu('&' + viewName)
+        viewMenu = self.menubar.addMenu('&' + viewName)
         modesMenu = QMenu(modesName, self)
         viewMenu.addMenu(modesMenu)
         modesMenu.addAction(self.mouse1stAct)
@@ -445,15 +439,11 @@ class CQCADGui(QMainWindow):
         self.layoutMenu = QMenu(layoutMenuName)
         viewMenu.addMenu(self.layoutMenu)
         # projMenu = menubar.addMenu('&Project')
-        scriptMenu = menubar.addMenu('&' + scriptName)
-        scriptMenu.addAction(execAct)
-        scriptMenu.addAction(debugAct)
-        scriptMenu.addAction(validAct)
-        helpMenu = menubar.addMenu('&' + helpName)
-        helpMenu.addAction(docsAct)
-        helpMenu.addAction(vidsAct)
-        helpMenu.addAction(uGroupAct)
-        helpMenu.addAction(aboutAct)
+        self.helpMenu = self.menubar.addMenu('&' + helpName)
+        self.helpMenu.addAction(docsAct)
+        self.helpMenu.addAction(vidsAct)
+        self.helpMenu.addAction(uGroupAct)
+        self.helpMenu.addAction(aboutAct)
 
         # Load layouts dynamically
         (layouts, self.funcs) = self.getLayouts()
@@ -472,9 +462,6 @@ class CQCADGui(QMainWindow):
         # Toolbar for CAD controls and extension controls
         self.toolbar = self.addToolBar('Main Tools')
         self.toolbar.addWidget(logoLabel)
-        self.toolbar.addAction(execAct)
-        self.toolbar.addAction(debugAct)
-        self.toolbar.addAction(validAct)
         self.toolbar.addAction(frontViewAct)
         self.toolbar.addAction(backViewAct)
         self.toolbar.addAction(topViewAct)
@@ -483,6 +470,9 @@ class CQCADGui(QMainWindow):
         self.toolbar.addAction(rightViewAct)
         self.toolbar.addAction(axioViewAct)
         self.toolbar.addAction(fitAllAct)
+
+        # Start up all extensions
+        self.loadExtensions()
 
         # Add the extensions dropdown at the right side of the toolbar
         spacer = QWidget()
