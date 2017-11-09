@@ -1,1 +1,4 @@
-__name__ = "Vertical Tile"
+__title__ = "Vertical Tile"
+
+def execute():
+    print(__title__ + " Layout Activated")

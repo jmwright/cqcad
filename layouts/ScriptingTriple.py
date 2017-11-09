@@ -1,1 +1,4 @@
-__name__ = "Scripting Triple"
+__title__ = "Scripting Triple"
+
+def execute():
+    print(__title__ + " Layout Activated")

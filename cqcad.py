@@ -9,7 +9,9 @@ Sets up the CQCad GUI for use - Pulls settings and populates menus.
 License: LGPL 3.0
 """
 
+# import imp
 import sys
+import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy
 from PyQt5.QtGui import QIcon, QPixmap
@@ -127,6 +129,35 @@ class CQCADGui(QMainWindow):
             self.dock.hide()
             self.dockAct.setChecked(False)
 
+    def getLayouts(self):
+        """
+        Finds a list of all the layouts that are installed.
+        :return: The titles of all the layouts that are installed.
+        """
+        module_base_path = os.path.dirname(__file__)
+        layouts_path = os.path.join(module_base_path, 'layouts')
+
+        titles = []
+        functions = {}
+
+        for module in os.listdir(layouts_path):
+            if module.endswith('.py') and module != "__init__.py":
+                baseName = os.path.splitext(module)[0]
+                name = "layouts." + baseName
+                mod = __import__(name, fromlist=[baseName])
+
+                titles.append(mod.__title__)
+                functions[mod.__title__.replace(' ', '_').lower()] = mod.execute
+
+        return (titles, functions)
+
+    def fireFunction(self):
+        """
+        Allows us to fire dynamically loaded functions while avoiding a mess
+        with a collections.namedtuple import error.
+        :return: None
+        """
+        self.funcs[self.sender().objectName()]()
 
     def initUI(self):
         # Translations of menu items
@@ -303,23 +334,23 @@ class CQCADGui(QMainWindow):
         self.dockAct.setObjectName('dock_panel')
         self.dockAct.triggered.connect(self.toggleDock)
 
-        self.hTileAct = QAction('&' + hTileName, self)
-        self.hTileAct.setStatusTip(hTileTip)
-        # self.hTileAct.setChecked(True)
-        # self.hTileAct.setObjectName('dock_panel')
-        self.hTileAct.triggered.connect(self.notImplemented)
-
-        self.vTileAct = QAction('&' + vTileName, self)
-        self.vTileAct.setStatusTip(vTileTip)
-        # self.vTileAct.setChecked(True)
-        # self.vTileAct.setObjectName('dock_panel')
-        self.vTileAct.triggered.connect(self.notImplemented)
-
-        self.scriptTripleAct = QAction('&' + scriptTripleName, self)
-        self.scriptTripleAct.setStatusTip(scriptTripleTip)
-        # self.scriptTripleAct.setChecked(True)
-        # self.scriptTripleAct.setObjectName('dock_panel')
-        self.scriptTripleAct.triggered.connect(self.notImplemented)
+        # self.hTileAct = QAction('&' + hTileName, self)
+        # self.hTileAct.setStatusTip(hTileTip)
+        # # self.hTileAct.setChecked(True)
+        # # self.hTileAct.setObjectName('dock_panel')
+        # self.hTileAct.triggered.connect(self.notImplemented)
+        #
+        # self.vTileAct = QAction('&' + vTileName, self)
+        # self.vTileAct.setStatusTip(vTileTip)
+        # # self.vTileAct.setChecked(True)
+        # # self.vTileAct.setObjectName('dock_panel')
+        # self.vTileAct.triggered.connect(self.notImplemented)
+        #
+        # self.scriptTripleAct = QAction('&' + scriptTripleName, self)
+        # self.scriptTripleAct.setStatusTip(scriptTripleTip)
+        # # self.scriptTripleAct.setChecked(True)
+        # # self.scriptTripleAct.setObjectName('dock_panel')
+        # self.scriptTripleAct.triggered.connect(self.notImplemented)
 
         libsAct = QAction('&' + libsName, self)
         # libsAct.setShortcut('F6')
@@ -437,9 +468,9 @@ class CQCADGui(QMainWindow):
         panelsMenu.addAction(self.dockAct)
         viewMenu.addMenu(panelsMenu)
         self.layoutMenu = QMenu(layoutMenuName)
-        self.layoutMenu.addAction(self.hTileAct)
-        self.layoutMenu.addAction(self.vTileAct)
-        self.layoutMenu.addAction(self.scriptTripleAct)
+        # self.layoutMenu.addAction(self.hTileAct)
+        # self.layoutMenu.addAction(self.vTileAct)
+        # self.layoutMenu.addAction(self.scriptTripleAct)
         viewMenu.addMenu(self.layoutMenu)
         # projMenu = menubar.addMenu('&Project')
         scriptMenu = menubar.addMenu('&' + scriptName)
@@ -451,6 +482,16 @@ class CQCADGui(QMainWindow):
         helpMenu.addAction(vidsAct)
         helpMenu.addAction(uGroupAct)
         helpMenu.addAction(aboutAct)
+
+        # Load layouts
+        (layouts, self.funcs) = self.getLayouts()
+        for layout in layouts:
+            act = QAction('&' + layout, self)
+            act.setStatusTip(layout)
+            act.setObjectName(layout.replace(' ', '_').lower())
+            act.triggered.connect(self.fireFunction)
+
+            self.layoutMenu.addAction(act)
 
         # The CadQuery logo
         logoLabel = QLabel()
