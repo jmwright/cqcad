@@ -156,7 +156,7 @@ class CQCADGui(QMainWindow):
         with a collections.namedtuple import error.
         :return: None
         """
-        self.funcs[self.sender().objectName()]()
+        self.funcs[self.sender().objectName()](self.mdiArea)
 
     def initUI(self):
         # Translations of menu items
