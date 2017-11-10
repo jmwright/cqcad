@@ -11,7 +11,7 @@ License: LGPL 3.0
 import sys
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy, QToolButton
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSettings
 from _version import __version__
@@ -23,6 +23,7 @@ class CQCADGui(QMainWindow):
     # Platform independent application settings
     settings = QSettings('cqcad', 'settings')
     guiState = QSettings('cqcad', 'gui')
+    menuList = []
 
     def __init__(self):
         super(CQCADGui, self).__init__()
@@ -161,10 +162,23 @@ class CQCADGui(QMainWindow):
         # Load all the extensions and for now tell them to run their setup function to make changes to the GUI
         for module in os.listdir(layouts_path):
             if module.endswith('.py') and module != "__init__.py":
+                # Give some visual indication that this is a set of extensions tools
+                self.toolbar.addSeparator()
+
                 baseName = os.path.splitext(module)[0]
                 name = "extensions." + baseName
                 mod = __import__(name, fromlist=[baseName])
                 mod.setup(self)
+
+                act = QAction('&' + baseName, self, checkable=True)
+                # act.setShortcut('F6')
+                act.setStatusTip(baseName)
+                act.setChecked(True)
+                act.setObjectName(baseName)
+                act.triggered.connect(self.toggleExtension)
+                self.extsMenu.addAction(act)
+
+                self.menuList.append(act)
 
     def fireFunction(self):
         """
@@ -172,7 +186,30 @@ class CQCADGui(QMainWindow):
         with a collections.namedtuple import error.
         :return: None
         """
-        self.funcs[self.sender().objectName()](self.mdiArea)
+        widget = self.sender().objectName()
+
+        # Avoid an exception from the key not being present
+        if widget in self.funcs.keys():
+            self.funcs[widget](self.mdiArea)
+
+    def toggleExtsMenuVisibility(self):
+        """
+        Allows the user to click on the extensions toolbutton and still get the
+        drop-down menu.
+        :return: None
+        """
+        if not self.extsMenu.isVisible():
+            self.extsButton.showMenu()
+
+    def toggleExtension(self):
+        baseName = self.sender().objectName()
+        name = "extensions." + baseName
+        mod = __import__(name, fromlist=[baseName])
+
+        if self.sender().isChecked():
+            mod.setup(self)
+        else:
+            mod.tearDown(self)
 
     def initUI(self):
         # Translations of menu items
@@ -401,11 +438,6 @@ class CQCADGui(QMainWindow):
         aboutAct.setStatusTip(abtTip)
         aboutAct.triggered.connect(self.clickAbout)
 
-        extsToolAct = QAction(QIcon('content/images/Material/ic_extension_black_24px.svg'), '&' + extsToolName, self)
-        # extsToolAct.setShortcut('F1')
-        extsToolAct.setStatusTip(extsToolTip)
-        extsToolAct.triggered.connect(self.notImplemented)
-
         self.menubar = self.menuBar()
         self.fileMenu = self.menubar.addMenu('&' + fileName)
         self.fileMenu.addAction(newAct)
@@ -471,6 +503,14 @@ class CQCADGui(QMainWindow):
         self.toolbar.addAction(axioViewAct)
         self.toolbar.addAction(fitAllAct)
 
+        # Drop-dowm menu that lets users select which extensions they want active
+        self.extsButton = QToolButton(self.toolbar)
+        self.extsButton.setIcon(QIcon('content/images/Material/ic_extension_black_24px.svg'))
+        self.extsMenu = QMenu(self.extsButton)
+        self.extsButton.clicked.connect(self.toggleExtsMenuVisibility)
+        self.extsButton.setMenu(self.extsMenu)
+        self.extsButton.setPopupMode(QToolButton.MenuButtonPopup)
+
         # Start up all extensions
         self.loadExtensions()
 
@@ -478,7 +518,7 @@ class CQCADGui(QMainWindow):
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolbar.addWidget(spacer)
-        self.toolbar.addAction(extsToolAct)
+        self.toolbar.addWidget(self.extsButton)
 
         # Side dock for things like the object viewer
         self.dock = DockWidget(self)
