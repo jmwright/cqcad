@@ -56,10 +56,13 @@ def tearDown(mainWindow):
     """
     execAct = mainWindow.findChild(QAction, "execAct")
     mainWindow.toolbar.removeAction(execAct)
+    execAct.deleteLater()
     debugAct = mainWindow.findChild(QAction, "debugAct")
     mainWindow.toolbar.removeAction(debugAct)
+    debugAct.deleteLater()
     validAct = mainWindow.findChild(QAction, "validAct")
     mainWindow.toolbar.removeAction(validAct)
+    validAct.deleteLater()
 
     menu = mainWindow.findChild(QMenu, "scriptMenu")
     menu.deleteLater()
