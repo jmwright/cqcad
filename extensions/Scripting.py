@@ -44,9 +44,13 @@ def setup(mainWindow):
     scriptMenu.setObjectName('scriptMenu')
     mainWindow.menubar.insertMenu(mainWindow.helpMenu.menuAction(), scriptMenu)
 
-    mainWindow.toolbar.addAction(execAct)
-    mainWindow.toolbar.addAction(debugAct)
-    mainWindow.toolbar.addAction(validAct)
+    mainWindow.toolbar.insertAction(mainWindow.helpAct, execAct)
+    mainWindow.toolbar.insertAction(mainWindow.helpAct, debugAct)
+    mainWindow.toolbar.insertAction(mainWindow.helpAct, validAct)
+
+    # Give some visual indication that this is a set of extensions tools
+    sep = mainWindow.toolbar.insertSeparator(mainWindow.helpAct)
+    sep.setObjectName("scripting_separator")
 
 def tearDown(mainWindow):
     """
@@ -63,6 +67,8 @@ def tearDown(mainWindow):
     validAct = mainWindow.findChild(QAction, "validAct")
     mainWindow.toolbar.removeAction(validAct)
     validAct.deleteLater()
+    sepAct = mainWindow.toolbar.findChild(QAction, "scripting_separator")
+    sepAct.deleteLater()
 
     menu = mainWindow.findChild(QMenu, "scriptMenu")
     menu.deleteLater()

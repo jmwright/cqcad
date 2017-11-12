@@ -56,6 +56,22 @@ class CQCADGui(QMainWindow):
 
         QMessageBox.about(self, varTitle, varMsg)
 
+    def clickHelp(self):
+        """
+        Displays a dialog with information about where to find help.
+
+        :return: None
+        """
+        docLabel = QLabel("http://dcowden.github.io/cadquery/")
+        docLabel.setOpenExternalLinks = True
+
+        varTitle = QtCore.QCoreApplication.translate('cqcad', "Finding Help")
+        varMsg = QtCore.QCoreApplication.translate('cqcad',
+                                                   "CQCad 2D/3D CAD\r\nVersion: " + __version__ + "\r\n\r\nDocumentation: http://dcowden.github.io/cadquery/\r\nVideo Tutorials: https://www.youtube.com/playlist?list=PLMXw3KF1-YfUeFnw6Ich9jvgYjyjiBS3w\r\nUser Group: https://groups.google.com/forum/#!forum/cadquery")
+
+        msgBox = QMessageBox.about(self, varTitle, varMsg)
+        # msgBox.setTextFormat(Qt.RichText)
+
 
     def notImplemented(self):
         """
@@ -162,18 +178,20 @@ class CQCADGui(QMainWindow):
         # Load all the extensions and for now tell them to run their setup function to make changes to the GUI
         for module in os.listdir(layouts_path):
             if module.endswith('.py') and module != "__init__.py":
-                # Give some visual indication that this is a set of extensions tools
-                self.toolbar.addSeparator()
-
                 baseName = os.path.splitext(module)[0]
                 name = "extensions." + baseName
                 mod = __import__(name, fromlist=[baseName])
-                mod.setup(self)
+
+                enabled = self.guiState.value(name + "_checked", type=bool)
+
+                # Only load the controls for the extension if it is selected
+                if enabled:
+                    mod.setup(self)
 
                 act = QAction('&' + baseName, self, checkable=True)
                 # act.setShortcut('F6')
                 act.setStatusTip(baseName)
-                act.setChecked(True)
+                act.setChecked(enabled)
                 act.setObjectName(baseName)
                 act.triggered.connect(self.toggleExtension)
                 self.extsMenu.addAction(act)
@@ -208,8 +226,12 @@ class CQCADGui(QMainWindow):
 
         if self.sender().isChecked():
             mod.setup(self)
+            self.guiState.setValue(name + "_checked", True)
         else:
             mod.tearDown(self)
+            self.guiState.setValue(name + "_checked", False)
+
+        self.guiState.sync()
 
     def initUI(self):
         # Translations of menu items
@@ -438,6 +460,11 @@ class CQCADGui(QMainWindow):
         aboutAct.setStatusTip(abtTip)
         aboutAct.triggered.connect(self.clickAbout)
 
+        self.helpAct = QAction(QIcon('content/images/Material/ic_help_24px.svg'), '&' + abtName, self)
+        # self.helpAct.setShortcut('F1')
+        self.helpAct.setStatusTip(abtTip)
+        self.helpAct.triggered.connect(self.clickHelp)
+
         self.menubar = self.menuBar()
         self.fileMenu = self.menubar.addMenu('&' + fileName)
         self.fileMenu.addAction(newAct)
@@ -502,6 +529,9 @@ class CQCADGui(QMainWindow):
         self.toolbar.addAction(rightViewAct)
         self.toolbar.addAction(axioViewAct)
         self.toolbar.addAction(fitAllAct)
+        self.toolbar.addSeparator()
+
+        self.toolbar.addAction(self.helpAct)
 
         # Drop-dowm menu that lets users select which extensions they want active
         self.extsButton = QToolButton(self.toolbar)
