@@ -1,37 +1,5 @@
 ## CQCad 3D CAD Application
 
-You can use the [editor on GitHub](https://github.com/jmwright/cqcad/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
+CQCad is designed so that everyone from hobbyists to coders, engineers and scientists can effectively create parametric 3D models. Whether the model is being writen directly in code, or created by the traditional point-and-click method, CQCad stores all models in the CadQuery scripting API format. Users can switch back and forth between using the mouse and writing the model as a script. This allows users to leverage the strengths of each method. For instance, the CadQuery API is cumbersome when creating 2D geometry. With CQCad, the 2D geometry can be created using the mouse, and then the user can switch to the script window to finish the model.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/jmwright/cqcad/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+***NOTE:*** CQCad is in the pre-release alpha stage right now. It is not production ready.
