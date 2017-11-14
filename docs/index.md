@@ -11,4 +11,4 @@ Below is a table that will help you select where to start with CQCad, depending 
 | Traditional CAD                                            | Scripted CAD                                      | Hybrid CAD                                                                          | Developers                             |
 |------------------------------------------------------------|---------------------------------------------------|-------------------------------------------------------------------------------------|----------------------------------------|
 | Users who are familiar with point-and-click CAD interfaces | Users who are more comfortable coding their CAD models | Users who want to leverage the strengths of point-and-click and scripted CAD models | People who wish to contribute to CQCad |
-| [Select]() | [Select]() | [Select]() | [Select]() |
+| [Select](traditional/index.md) | [Select](scripted/index.md) | [Select](hybrid/index.md) | [Select](developers/index.md) |
