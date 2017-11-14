@@ -1,2 +1,2 @@
-PyQt5>5.0
-pytest-qt>2.2.1
+PyQt5==5.9
+pytest-qt==2.2.1
