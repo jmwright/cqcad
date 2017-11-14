@@ -4,11 +4,7 @@ CQCad is designed so that everyone from hobbyists to coders, engineers and scien
 
 ***NOTE:*** CQCad is in the pre-release alpha stage right now. It is not production ready.
 
-<div class="card" style="width: 20rem;">
-  <img class="card-img-top" src="..." alt="Card image cap">
-  <div class="card-block">
-    <h4 class="card-title">Card title</h4>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
-  </div>
-</div>
+| Traditional CAD                                            | Scripted CAD                                      | Hybrid CAD                                                                          | Developers                             |
+|------------------------------------------------------------|---------------------------------------------------|-------------------------------------------------------------------------------------|----------------------------------------|
+| Users who are familiar with point-and-click CAD interfaces | Users who are comfortable coding their CAD models | Users who want to leverage the strengths of point-and-click and scripted CAD models | People who wish to contribute to CQCad |
+| [Link1]() | [Link2]() | [Link3]() | [Link4]() |
