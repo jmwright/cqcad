@@ -1,4 +1,5 @@
 # CQCad
+[![Build Status](https://travis-ci.org/jmwright/cqcad.svg?branch=master)](https://travis-ci.org/jmwright/cqcad)
 
 ***NOTE*** - This software is in a pre-release alpha phase. Do not try to use it unless you have an interest in influencing CadQuery GUI development and are willing to start with an application that is not production-ready.
 
