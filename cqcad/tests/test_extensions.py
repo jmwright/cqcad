@@ -4,15 +4,15 @@ import pytest
 import sys, os
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QMenu
-from ..cqcad import CQCADGui
 
-@pytest.fixture(scope="session", autouse=True)
-def do_something(request):
-    # Make sure that these tests can import the cqcad modules properly
-    encoding = sys.getfilesystemencoding()
-    test_base_path = os.path.dirname(unicode(__file__, encoding))
-    module_base_path = os.path.abspath(os.path.join(test_base_path, os.pardir))
-    sys.path.insert(0, module_base_path)
+# encoding = sys.getfilesystemencoding()
+test_base_path = os.path.dirname(__file__)
+module_base_path = os.path.abspath(os.path.join(test_base_path, os.pardir))
+# module_base_path = os.path.join(module_base_path, "cqcad")
+sys.path.insert(0, module_base_path)
+print(sys.path)
+
+from cqcad.CQCadWindow import CQCadWindow
 
 def test_extensions_dropdown(qtbot, tmpdir):
     """
@@ -22,7 +22,7 @@ def test_extensions_dropdown(qtbot, tmpdir):
     :param tmpdir: Temporary directory
     :return: None
     """
-    window = CQCADGui()
+    window = CQCadWindow()
     window.show()
     qtbot.addWidget(window)
 

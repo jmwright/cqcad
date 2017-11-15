@@ -1,32 +1,22 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-CQCad GUI entry point
-
-Sets up the CQCad GUI for use - Pulls settings and populates menus.
-
-License: LGPL 3.0
-"""
 import sys
 import os
-# from ._version import __version__
+from _version import __version__
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy, QToolButton
+from PyQt5.QtWidgets import QMainWindow, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy, QToolButton
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSettings
 from components.CodeEdit import CodeEdit
 from components.DockWidget import DockWidget
 
 
-class CQCADGui(QMainWindow):
+class CQCadWindow(QMainWindow):
     # Platform independent application settings
     settings = QSettings('cqcad', 'settings')
     guiState = QSettings('cqcad', 'gui')
     menuList = []
 
     def __init__(self):
-        super(CQCADGui, self).__init__()
+        super(CQCadWindow, self).__init__()
 
         self.initUI()
 
@@ -51,9 +41,8 @@ class CQCADGui(QMainWindow):
 
         :return: None
         """
-        version = "0.0.1-a1" # TODO: Fix this to import from ._version
         varTitle = QtCore.QCoreApplication.translate('cqcad', "About CQCad")
-        varMsg = QtCore.QCoreApplication.translate('cqcad', "CQCad 2D/3D CAD\r\nVersion: " + version + "\r\n\r\nCadQuery Version: N/A\r\nPythonOCC Version: N/A\r\nFreeCAD Version: N/A")
+        varMsg = QtCore.QCoreApplication.translate('cqcad', "CQCad 2D/3D CAD\r\nVersion: " + __version__ + "\r\n\r\nCadQuery Version: N/A\r\nPythonOCC Version: N/A\r\nFreeCAD Version: N/A")
 
         QMessageBox.about(self, varTitle, varMsg)
 
@@ -63,13 +52,12 @@ class CQCADGui(QMainWindow):
 
         :return: None
         """
-        version = "0.0.1-a1"  # TODO: Fix this to import from ._version
         docLabel = QLabel("http://dcowden.github.io/cadquery/")
         docLabel.setOpenExternalLinks = True
 
         varTitle = QtCore.QCoreApplication.translate('cqcad', "Finding Help")
         varMsg = QtCore.QCoreApplication.translate('cqcad',
-                                                   "CQCad 2D/3D CAD\r\nVersion: " + version + "\r\n\r\nDocumentation: http://dcowden.github.io/cadquery/\r\nVideo Tutorials: https://www.youtube.com/playlist?list=PLMXw3KF1-YfUeFnw6Ich9jvgYjyjiBS3w\r\nUser Group: https://groups.google.com/forum/#!forum/cadquery")
+                                                   "CQCad 2D/3D CAD\r\nVersion: " + __version__ + "\r\n\r\nDocumentation: http://dcowden.github.io/cadquery/\r\nVideo Tutorials: https://www.youtube.com/playlist?list=PLMXw3KF1-YfUeFnw6Ich9jvgYjyjiBS3w\r\nUser Group: https://groups.google.com/forum/#!forum/cadquery")
 
         msgBox = QMessageBox.about(self, varTitle, varMsg)
         # msgBox.setTextFormat(Qt.RichText)
@@ -582,13 +570,3 @@ class CQCADGui(QMainWindow):
         d.exec_()
 
         # TODO: Init with keybindings, execute_on_save, use_external_editor, max_line_length settings, line_numbers, cad_engine
-
-
-def main():
-    app = QApplication(sys.argv)
-    cqcad = CQCADGui()
-
-    sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()
