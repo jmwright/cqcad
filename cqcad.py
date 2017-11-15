@@ -10,11 +10,11 @@ License: LGPL 3.0
 """
 import sys
 import os
+from _version import __version__
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy, QToolButton
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSettings
-from _version import __version__
 from components.CodeEdit import CodeEdit
 from components.DockWidget import DockWidget
 
