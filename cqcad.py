@@ -10,7 +10,7 @@ License: LGPL 3.0
 """
 import sys
 import os
-from _version import __version__
+# from ._version import __version__
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy, QToolButton
 from PyQt5.QtGui import QIcon, QPixmap
@@ -51,8 +51,9 @@ class CQCADGui(QMainWindow):
 
         :return: None
         """
+        version = "0.0.1-a1" # TODO: Fix this to import from ._version
         varTitle = QtCore.QCoreApplication.translate('cqcad', "About CQCad")
-        varMsg = QtCore.QCoreApplication.translate('cqcad', "CQCad 2D/3D CAD\r\nVersion: " + __version__ + "\r\n\r\nCadQuery Version: N/A\r\nPythonOCC Version: N/A\r\nFreeCAD Version: N/A")
+        varMsg = QtCore.QCoreApplication.translate('cqcad', "CQCad 2D/3D CAD\r\nVersion: " + version + "\r\n\r\nCadQuery Version: N/A\r\nPythonOCC Version: N/A\r\nFreeCAD Version: N/A")
 
         QMessageBox.about(self, varTitle, varMsg)
 
@@ -62,12 +63,13 @@ class CQCADGui(QMainWindow):
 
         :return: None
         """
+        version = "0.0.1-a1"  # TODO: Fix this to import from ._version
         docLabel = QLabel("http://dcowden.github.io/cadquery/")
         docLabel.setOpenExternalLinks = True
 
         varTitle = QtCore.QCoreApplication.translate('cqcad', "Finding Help")
         varMsg = QtCore.QCoreApplication.translate('cqcad',
-                                                   "CQCad 2D/3D CAD\r\nVersion: " + __version__ + "\r\n\r\nDocumentation: http://dcowden.github.io/cadquery/\r\nVideo Tutorials: https://www.youtube.com/playlist?list=PLMXw3KF1-YfUeFnw6Ich9jvgYjyjiBS3w\r\nUser Group: https://groups.google.com/forum/#!forum/cadquery")
+                                                   "CQCad 2D/3D CAD\r\nVersion: " + version + "\r\n\r\nDocumentation: http://dcowden.github.io/cadquery/\r\nVideo Tutorials: https://www.youtube.com/playlist?list=PLMXw3KF1-YfUeFnw6Ich9jvgYjyjiBS3w\r\nUser Group: https://groups.google.com/forum/#!forum/cadquery")
 
         msgBox = QMessageBox.about(self, varTitle, varMsg)
         # msgBox.setTextFormat(Qt.RichText)
