@@ -9,7 +9,6 @@ It is highly recommended that you set up a [virtual environment](https://docs.py
 Clone this repository to your local system.
 ```bash
 git clone --recursive https://github.com/jmwright/cqcad.git
-
 ```
 Notice the `recursive` option in the line below. Extensions and layouts are often included in this repository as git submodules. Without the recursive clone you will not get everything that's needed for the applicaiton to run properly. Downloading the zip of the repo from GitHub will not provide you with all the submodules either.
 
