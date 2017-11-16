@@ -1,6 +1,6 @@
 ## Getting Started
 
-These instructions assume that you are running Linux. If you are a developer running Windows or MacOS, please feel free to open an [issue](https://github.com/jmwright/cqcad/issues) and ask that these instructions be updated for those operating systems as well. Pull requests are also welcome, and can be submitted for these docs.
+These instructions assume that you are running Linux. If you are a developer running Windows or MacOS, please feel free to open an [issue](https://github.com/jmwright/cqcad/issues) and ask that these instructions be updated for those operating systems. Pull requests are also welcome, and can be submitted for these docs as well.
 
 ### Before Starting
 It is highly recommended that you set up a [virtual environment](https://docs.python.org/3/tutorial/venv.html) for CQCad development. Once you have activated the virtual environment you can follow the procedure below to get the app up and running.
@@ -10,10 +10,10 @@ Clone this repository to your local system.
 ```bash
 git clone --recursive https://github.com/jmwright/cqcad.git
 ```
-Notice the `recursive` option in the line below. Extensions and layouts are often included in this repository as git submodules. Without the recursive clone you will not get everything that's needed for the applicaiton to run properly. Downloading the zip of the repo from GitHub will not provide you with all the submodules either.
+Notice the `recursive` option in the line below. Extensions and layouts are often included in this repository as git submodules. Without the recursive clone you will not get everything that is needed for the applicaiton to run properly. Downloading the zip of the repo from GitHub will not provide you with all the submodules either.
 
 ### Install Pre-Requisites
-Change into the cqcad root directory and install the pre-requisite Python packages.
+Change into the `cqcad` root directory and install the pre-requisite Python packages.
 ```bash
 cd cqcad/
 pip3 install -r requirements.txt
