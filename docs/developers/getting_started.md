@@ -21,7 +21,7 @@ pip3 install -r requirements.txt
 PyQt5 is one of the pre-requisites installed, and is the framework used to create the GUI portion of CQCad.
 
 ### Run CQCad
-`cqcad/cqcad/cqcad.py` is the entry point for the application.
+`cqcad/cqcad/cqcad.py` is the entry point for the application. When you run it, the main CQCad window should appear and be functional.
 ```bash
 cd cqcad/
 ./cqcad.py
