@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy, QToolButton
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSettings
-from components.CodeEdit import CodeEdit
+from components.CodeEditor import CodeEditor
 from components.DockWidget import DockWidget
 
 
@@ -553,7 +553,7 @@ class CQCadWindow(QMainWindow):
         self.setCentralWidget(self.mdiArea)
 
         # For now, default to opening a script editor
-        child = CodeEdit()
+        child = CodeEditor(self)
         self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
         self.mdiArea.addSubWindow(child)
         child.setWindowState(QtCore.Qt.WindowMaximized)
