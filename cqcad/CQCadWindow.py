@@ -295,7 +295,7 @@ class CQCadWindow(QMainWindow):
 
         self.setGeometry(300, 300, 250, 150)
         self.setWindowTitle('CQCad')
-        self.setWindowIcon(QtGui.QIcon('content/images/compass.svg'))
+        self.setWindowIcon(QtGui.QIcon('content/images/cadquery_logo_dark.svg'))
         self.statusBar().showMessage('Ready')
 
         # Set up our menu
