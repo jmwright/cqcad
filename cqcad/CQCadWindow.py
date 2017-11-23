@@ -7,6 +7,7 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSettings
 from components.CodeEditor import CodeEditor
 from components.DockWidget import DockWidget
+from components.SettingsDialog import SettingsDialog
 
 
 class CQCadWindow(QMainWindow):
@@ -227,8 +228,10 @@ class CQCadWindow(QMainWindow):
         # Translations of menu items
         exitName = QtCore.QCoreApplication.translate('cqcad', "Exit")
         exitTip = QtCore.QCoreApplication.translate('cqcad', "Exit application")
-        newName = QtCore.QCoreApplication.translate('cqcad', "New")
-        newTip = QtCore.QCoreApplication.translate('cqcad', "New project or script")
+        newModelName = QtCore.QCoreApplication.translate('cqcad', "New")
+        newModelTip = QtCore.QCoreApplication.translate('cqcad', "New model")
+        newProjName = QtCore.QCoreApplication.translate('cqcad', "New Project")
+        newProjTip = QtCore.QCoreApplication.translate('cqcad', "New project")
         openName = QtCore.QCoreApplication.translate('cqcad', "Open")
         openTip = QtCore.QCoreApplication.translate('cqcad', "Open project or script")
         closeName = QtCore.QCoreApplication.translate('cqcad', "Close")
@@ -304,10 +307,15 @@ class CQCadWindow(QMainWindow):
         exitAct.setStatusTip(exitTip)
         exitAct.triggered.connect(qApp.quit)
 
-        newAct = QAction('&' + newName, self)
-        # newAct.setShortcut('Ctrl+Q')
-        newAct.setStatusTip(newTip)
-        newAct.triggered.connect(self.notImplemented)
+        newModelAct = QAction('&' + newModelName, self)
+        # newModelAct.setShortcut('Ctrl+Q')
+        newModelAct.setStatusTip(newModelTip)
+        newModelAct.triggered.connect(self.notImplemented)
+
+        newProjAct = QAction('&' + newProjName, self)
+        # newProjAct.setShortcut('Ctrl+Q')
+        newProjAct.setStatusTip(newProjTip)
+        newProjAct.triggered.connect(self.notImplemented)
 
         openAct = QAction('&' + openName, self)
         # openAct.setShortcut('Ctrl+Q')
@@ -457,7 +465,8 @@ class CQCadWindow(QMainWindow):
 
         self.menubar = self.menuBar()
         self.fileMenu = self.menubar.addMenu('&' + fileName)
-        self.fileMenu.addAction(newAct)
+        self.fileMenu.addAction(newModelAct)
+        self.fileMenu.addAction(newProjAct)
         self.fileMenu.addAction(openAct)
         self.fileMenu.addAction(closeAct)
         self.recentMenu = QMenu(rcntName, self)
@@ -562,11 +571,6 @@ class CQCadWindow(QMainWindow):
 
 
     def showSettingsDialog(self):
-        d = QDialog()
-        # b1 = QPushButton("ok", d)
-        # b1.move(50, 50)
-        d.setWindowTitle("CQCad Settings")
-        # d.setWindowModality(Qt.ApplicationModal)
-        d.exec_()
+        dlg = SettingsDialog()
 
         # TODO: Init with keybindings, execute_on_save, use_external_editor, max_line_length settings, line_numbers, cad_engine
