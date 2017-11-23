@@ -2,6 +2,8 @@ from PyQt5.QtCore import Qt, QSettings
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QCheckBox
 
 class SettingsDialog(QDialog):
+    settings = QSettings('cqcad', 'settings')
+
     def __init__(self):
         super(SettingsDialog, self).__init__()
 
@@ -23,9 +25,9 @@ class SettingsDialog(QDialog):
 
         # Line numbers checkbox
         self.lineNumbersCB = QCheckBox('Show Line Numbers', self)
-        # self.lineNumbersCB.move(20, 20)
-        self.lineNumbersCB.toggle()
-        self.lineNumbersCB.stateChanged.connect(self.toggleLineNumber)
+        lineNumbersCheckedState = self.settings.value('editor_line_numbers_visible', type=bool)
+        self.lineNumbersCB.setChecked(lineNumbersCheckedState)
+        self.lineNumbersCB.stateChanged.connect(self.changeLineNumberSetting)
 
         self.tab1.layout.addWidget(self.lineNumbersCB)
         self.tab1.setLayout(self.tab1.layout)
@@ -40,7 +42,21 @@ class SettingsDialog(QDialog):
 
         # TODO: Init with keybindings, execute_on_save, use_external_editor, max_line_length settings, line_numbers, cad_engine
 
-    def toggleLineNumber(self):
-        print("Toggling Line Number")
+    def changeLineNumberSetting(self):
+        """
+        Changes the setting for whether or not line numbers are enabled on the Python editor
+        :return: None
+        """
 
-        # TODO: Start here and change the setting for the line numbers
+        self.settings.setValue('editor_line_numbers_visible', self.sender().isChecked())
+
+    def closeEvent(self, event):
+        """
+        Allows us to clean up after ourselves and make sure that everything is
+        saved that the user intended to save.
+
+        :param event: Object describing this event
+        :return: None
+        """
+
+        self.settings.sync()
