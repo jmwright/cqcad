@@ -8,6 +8,7 @@ from PyQt5.QtCore import Qt, QSettings
 from components.CodeEditor import CodeEditor
 from components.DockWidget import DockWidget
 from components.SettingsDialog import SettingsDialog
+from components.NewDialog import NewDialog
 
 
 class CQCadWindow(QMainWindow):
@@ -224,14 +225,66 @@ class CQCadWindow(QMainWindow):
 
         self.guiState.sync()
 
+    def showSettingsDialog(self):
+        self.settingsDlg = SettingsDialog()
+
+        # TODO: Init with keybindings, execute_on_save, use_external_editor, max_line_length settings, line_numbers, cad_engine
+
+    def showNewDialog(self):
+        newDlg = NewDialog(self)
+
+    def addScriptWindow(self):
+        """
+        Opens a template in the Python script editor
+        :return: None
+        """
+        child = CodeEditor(self)
+        self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
+        self.mdiArea.addSubWindow(child)
+        child.setWindowState(QtCore.Qt.WindowMaximized)
+
+        file = open("templates/script_template.py", "r")
+        templateText = file.read()
+
+        child.setPlainText(templateText)
+
+    def addPartWindow(self):
+        """
+        For now, default to opening a part template in the Python script editor
+        :return: None
+        """
+        child = CodeEditor(self)
+        self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
+        self.mdiArea.addSubWindow(child)
+        child.setWindowState(QtCore.Qt.WindowMaximized)
+
+        file = open("templates/part_template.py", "r")
+        templateText = file.read()
+
+        child.setPlainText(templateText)
+
+    def addAsmWindow(self):
+        """
+        For now, default to opening a part template in the Python script editor
+        :return: None
+        """
+        # For now, default to opening a script editor
+        child = CodeEditor(self)
+        self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
+        self.mdiArea.addSubWindow(child)
+        child.setWindowState(QtCore.Qt.WindowMaximized)
+
+        file = open("templates/assembly_template.py", "r")
+        templateText = file.read()
+
+        child.setPlainText(templateText)
+
     def initUI(self):
         # Translations of menu items
         exitName = QtCore.QCoreApplication.translate('cqcad', "Exit")
         exitTip = QtCore.QCoreApplication.translate('cqcad', "Exit application")
-        newModelName = QtCore.QCoreApplication.translate('cqcad', "New")
-        newModelTip = QtCore.QCoreApplication.translate('cqcad', "New model")
-        newProjName = QtCore.QCoreApplication.translate('cqcad', "New Project")
-        newProjTip = QtCore.QCoreApplication.translate('cqcad', "New project")
+        newName = QtCore.QCoreApplication.translate('cqcad', "New")
+        newTip = QtCore.QCoreApplication.translate('cqcad', "New")
         openName = QtCore.QCoreApplication.translate('cqcad', "Open")
         openTip = QtCore.QCoreApplication.translate('cqcad', "Open project or script")
         closeName = QtCore.QCoreApplication.translate('cqcad', "Close")
@@ -307,15 +360,10 @@ class CQCadWindow(QMainWindow):
         exitAct.setStatusTip(exitTip)
         exitAct.triggered.connect(qApp.quit)
 
-        newModelAct = QAction('&' + newModelName, self)
-        # newModelAct.setShortcut('Ctrl+Q')
-        newModelAct.setStatusTip(newModelTip)
-        newModelAct.triggered.connect(self.notImplemented)
-
-        newProjAct = QAction('&' + newProjName, self)
-        # newProjAct.setShortcut('Ctrl+Q')
-        newProjAct.setStatusTip(newProjTip)
-        newProjAct.triggered.connect(self.notImplemented)
+        newAct = QAction('&' + newName, self)
+        newAct.setShortcut('Ctrl+N')
+        newAct.setStatusTip(newTip)
+        newAct.triggered.connect(self.showNewDialog)
 
         openAct = QAction('&' + openName, self)
         # openAct.setShortcut('Ctrl+Q')
@@ -465,8 +513,7 @@ class CQCadWindow(QMainWindow):
 
         self.menubar = self.menuBar()
         self.fileMenu = self.menubar.addMenu('&' + fileName)
-        self.fileMenu.addAction(newModelAct)
-        self.fileMenu.addAction(newProjAct)
+        self.fileMenu.addAction(newAct)
         self.fileMenu.addAction(openAct)
         self.fileMenu.addAction(closeAct)
         self.recentMenu = QMenu(rcntName, self)
@@ -561,16 +608,4 @@ class CQCadWindow(QMainWindow):
         self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setCentralWidget(self.mdiArea)
 
-        # For now, default to opening a script editor
-        child = CodeEditor(self)
-        self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
-        self.mdiArea.addSubWindow(child)
-        child.setWindowState(QtCore.Qt.WindowMaximized)
-
         self.showMaximized()
-
-
-    def showSettingsDialog(self):
-        dlg = SettingsDialog()
-
-        # TODO: Init with keybindings, execute_on_save, use_external_editor, max_line_length settings, line_numbers, cad_engine

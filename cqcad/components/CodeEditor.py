@@ -4,9 +4,9 @@ from PyQt5.QtGui import QPainter, QSyntaxHighlighter, QTextCharFormat, QFont, QC
 from PyQt5.QtWidgets import QPlainTextEdit, QTextEdit, QWidget
 
 class LineNumberArea(QWidget):
-    def __init__(self,parent):
-        QWidget.__init__(self,parent)
-        self.codeEditor=parent
+    def __init__(self, parent):
+        QWidget.__init__(self, parent)
+        self.codeEditor = parent
 
     def sizeHint(self):
         return QSize(self.codeEditor.lineNumberAreaWidth(),0)
