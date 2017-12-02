@@ -4,8 +4,8 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QCheckBox
 class SettingsDialog(QDialog):
     settings = QSettings('cqcad', 'settings')
 
-    def __init__(self):
-        super(SettingsDialog, self).__init__()
+    def __init__(self, parent):
+        super(SettingsDialog, self).__init__(parent)
 
         self.layout = QVBoxLayout(self)
 
@@ -49,6 +49,17 @@ class SettingsDialog(QDialog):
         """
 
         self.settings.setValue('editor_line_numbers_visible', self.sender().isChecked())
+
+        subWindows = self.parent().mdiArea.subWindowList()
+        for subWindow in subWindows:
+            objName = subWindow.widget().objectName()
+
+            # Change the line number visibility for all script windows
+            if objName.split(':')[0] == "script":
+                if self.sender().isChecked():
+                    subWindow.widget().showLineNumberArea()
+                else:
+                    subWindow.widget().hideLineNumberArea()
 
     def closeEvent(self, event):
         """

@@ -15,6 +15,8 @@ class LineNumberArea(QWidget):
         self.codeEditor.lineNumberAreaPaintEvent(event)
 
 class CodeEditor(QPlainTextEdit):
+    settings = QSettings('cqcad', 'settings')
+
     def __init__(self, parent):
         # super(CodeEditor, self).__init__()
         QPlainTextEdit.__init__(self, parent)
@@ -27,7 +29,28 @@ class CodeEditor(QPlainTextEdit):
         self.highlightCurrentLine()
         self.highlighter = PythonHighlighter(self.document())
 
+        # Determine if the line number area needs to be shown or not
+        lineNumbersCheckedState = self.settings.value('editor_line_numbers_visible', type=bool)
+        if lineNumbersCheckedState:
+            self.showLineNumberArea()
+        else:
+            self.hideLineNumberArea()
+
         self.initUI()
+
+    def hideLineNumberArea(self):
+        """
+        Hides this editor's line number area.
+        :return: None
+        """
+        self.lineNumberArea.setVisible(False)
+
+    def showLineNumberArea(self):
+        """
+        Shows this editor's line number area.
+        :return: None
+        """
+        self.lineNumberArea.setVisible(True)
 
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.lineNumberArea)

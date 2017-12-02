@@ -1,5 +1,6 @@
 import sys
 import os
+import uuid
 from _version import __version__
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy, QToolButton
@@ -226,7 +227,7 @@ class CQCadWindow(QMainWindow):
         self.guiState.sync()
 
     def showSettingsDialog(self):
-        self.settingsDlg = SettingsDialog()
+        self.settingsDlg = SettingsDialog(self)
 
         # TODO: Init with keybindings, execute_on_save, use_external_editor, max_line_length settings, line_numbers, cad_engine
 
@@ -239,6 +240,7 @@ class CQCadWindow(QMainWindow):
         :return: None
         """
         child = CodeEditor(self)
+        child.setObjectName('script:' + str(uuid.uuid1()))
         self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
         self.mdiArea.addSubWindow(child)
         child.setWindowState(QtCore.Qt.WindowMaximized)
