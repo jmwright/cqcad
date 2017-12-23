@@ -14,10 +14,16 @@ git clone --recursive https://github.com/jmwright/cqcad.git
 Notice the `recursive` option in the line below. Extensions and layouts are often included in this repository as git submodules. Without the recursive clone you will not get everything that is needed for the applicaiton to run properly. Downloading the zip of the repo from GitHub will not provide you with all the submodules either.
 
 ### Install Pre-Requisites
+For now, Anaconda is used to set up the PythonOCC environment. Eventaully PythonOCC will be embedded with this application. Be sure to install the Python 3.x version of [Anaconda](https://www.anaconda.com/download/).
+```bash
+source ~/ANACONDA_INSTALL_DIR/bin/activate 
+conda create -n cq-occ-testing -c pythonocc -c oce -c conda-forge -c dlr-sc -c CadQuery cadquery-occ
+source activate cq-occ-testing
+```
 Change into the `cqcad` root directory and install the pre-requisite Python packages.
 ```bash
 cd cqcad/
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 PyQt5 is one of the pre-requisites installed, and is the framework used to create the GUI portion of CQCad.
 
