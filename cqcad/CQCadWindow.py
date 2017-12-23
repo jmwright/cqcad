@@ -3,13 +3,15 @@ import os
 import uuid
 from _version import __version__
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy, QToolButton
+from PyQt5.QtWidgets import QMainWindow, QWidget, QAction, qApp, QMessageBox, QMenu, QDialog, QLabel, QDockWidget, QMdiArea, QSizePolicy, QToolButton, QMdiSubWindow
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSettings
 from components.CodeEditor import CodeEditor
 from components.DockWidget import DockWidget
 from components.SettingsDialog import SettingsDialog
 from components.NewDialog import NewDialog
+from components.Viewer3D import Viewer3D
+from OCC.Display.backend import load_backend, get_qt_modules
 
 
 class CQCadWindow(QMainWindow):
@@ -91,8 +93,17 @@ class CQCadWindow(QMainWindow):
         # Toggle all the other items that were not selected
         if sending_button.objectName() == 'mouse_first':
             self.script1stAct.setChecked(False)
+
+            # Keep track of the state of the GUI for the user
+            self.guiState.setValue('mouse_first_enabled', True)
+            self.guiState.setValue('script_first_enabled', False)
+
         elif sending_button.objectName() == 'script_first':
             self.mouse1stAct.setChecked(False)
+
+            # Keep track of the state of the GUI for the user
+            self.guiState.setValue('mouse_first_enabled', False)
+            self.guiState.setValue('script_first_enabled', True)
 
 
     def toggleDock(self):
@@ -239,11 +250,13 @@ class CQCadWindow(QMainWindow):
         Opens a template in the Python script editor
         :return: None
         """
+        subWin = QMdiSubWindow()
         child = CodeEditor(self)
+        subWin.setWidget(child)
         child.setObjectName('script:' + str(uuid.uuid1()))
         self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
-        self.mdiArea.addSubWindow(child)
-        child.setWindowState(QtCore.Qt.WindowMaximized)
+        self.mdiArea.addSubWindow(subWin)
+        subWin.setWindowState(QtCore.Qt.WindowMaximized)
 
         file = open("templates/script_template.py", "r")
         templateText = file.read()
@@ -255,15 +268,38 @@ class CQCadWindow(QMainWindow):
         For now, default to opening a part template in the Python script editor
         :return: None
         """
-        child = CodeEditor(self)
+        subWin = QMdiSubWindow()
         self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
-        self.mdiArea.addSubWindow(child)
-        child.setWindowState(QtCore.Qt.WindowMaximized)
+        self.mdiArea.addSubWindow(subWin)
 
-        file = open("templates/part_template.py", "r")
-        templateText = file.read()
+        # backend_str = "qt-pyqt5"
+        # used_backend = load_backend(backend_str)
+        # from OCC.Display.qtDisplay import qtViewer3d
 
-        child.setPlainText(templateText)
+        # Set the part window up differently based on whether the user has
+        # selected the mouse first or script first mode
+        if self.mouse1stAct.isChecked():
+            child = Viewer3D(self)
+            subWin.setWidget(child)
+
+            # If we don't do this the window title bar can disappear
+            subWin.setMinimumSize(100, 300)
+
+            subWin.setWindowState(QtCore.Qt.WindowMaximized)
+
+            # For now display a default object
+            child.InitDriver()
+            child._display.Test()
+        else:
+            child = CodeEditor(self)
+            subWin.setWidget(child)
+
+            file = open("templates/part_template.py", "r")
+            templateText = file.read()
+
+            child.setPlainText(templateText)
+
+            subWin.setWindowState(QtCore.Qt.WindowMaximized)
 
     def addAsmWindow(self):
         """
@@ -281,7 +317,22 @@ class CQCadWindow(QMainWindow):
 
         child.setPlainText(templateText)
 
+    def setInitialGUIState(self):
+        # Mouse vs script mode
+        self.guiState.setValue('script_first_enabled', True)
+        self.guiState.setValue('mouse_first_enabled', False)
+
+        # Widget visibility
+        self.guiState.setValue('dock_visible', True)
+
+        # Make sure we only enter this code once
+        self.guiState.setValue('first_run_over', True)
+
     def initUI(self):
+        # Handle setting things up if this is the first time this app has been run
+        if not self.guiState.value('first_run_over', type=bool):
+            self.setInitialGUIState()
+
         # Translations of menu items
         exitName = QtCore.QCoreApplication.translate('cqcad', "Exit")
         exitTip = QtCore.QCoreApplication.translate('cqcad', "Exit application")
@@ -351,7 +402,14 @@ class CQCadWindow(QMainWindow):
         extsToolName = QtCore.QCoreApplication.translate('cqcad', "Extensions")
         extsToolTip = QtCore.QCoreApplication.translate('cqcad', "Extensions")
 
-        self.setGeometry(300, 300, 250, 150)
+        #self.setGeometry(300, 300, 250, 150)
+
+        # The central MDI window area
+        self.mdiArea = QMdiArea()
+        self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setCentralWidget(self.mdiArea)
+
         self.setWindowTitle('CQCad')
         self.setWindowIcon(QtGui.QIcon('content/images/cadquery_logo_dark.svg'))
         self.statusBar().showMessage('Ready')
@@ -390,14 +448,14 @@ class CQCadWindow(QMainWindow):
         self.mouse1stAct = QAction('&' + m1stName, self, checkable=True)
         # self.mouse1stAct.setShortcut('F6')
         self.mouse1stAct.setStatusTip(m1stTip)
-        self.mouse1stAct.setChecked(False)
+        self.mouse1stAct.setChecked(self.guiState.value('mouse_first_enabled', type=bool))
         self.mouse1stAct.setObjectName('mouse_first')
         self.mouse1stAct.triggered.connect(self.switchModes)
 
         self.script1stAct = QAction('&' + s1stName, self, checkable=True)
         # self.script1stAct.setShortcut('F6')
         self.script1stAct.setStatusTip(s1stTip)
-        self.script1stAct.setChecked(True)
+        self.script1stAct.setChecked(self.guiState.value('script_first_enabled', type=bool))
         self.script1stAct.setObjectName('script_first')
         self.script1stAct.triggered.connect(self.switchModes)
 
@@ -563,12 +621,12 @@ class CQCadWindow(QMainWindow):
             self.layoutMenu.addAction(act)
 
         # The CadQuery logo
-        logoLabel = QLabel()
-        logoLabel.setPixmap(QPixmap('content/images/cadquery_logo.svg'))
+        # logoLabel = QLabel()
+        # logoLabel.setPixmap(QPixmap('content/images/cadquery_logo_dark.svg'))
 
         # Toolbar for CAD controls and extension controls
         self.toolbar = self.addToolBar('Main Tools')
-        self.toolbar.addWidget(logoLabel)
+        # self.toolbar.addWidget(logoLabel)
         self.toolbar.addAction(frontViewAct)
         self.toolbar.addAction(backViewAct)
         self.toolbar.addAction(topViewAct)
@@ -603,11 +661,5 @@ class CQCadWindow(QMainWindow):
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dock)
         self.dock.setMinimumSize(200, 100)
         self.setInitialDockState()
-
-        # The central MDI window area
-        self.mdiArea = QMdiArea()
-        self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.setCentralWidget(self.mdiArea)
 
         self.showMaximized()
