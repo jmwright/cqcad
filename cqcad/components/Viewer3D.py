@@ -111,13 +111,16 @@ class Viewer3D(qtBaseViewer):
         self._display.Zoom_FitAll()
 
     def wheelEvent(self, event):
-        numDegrees = event.angleDelta().y() / 8
-        # numSteps = numDegrees / 15.0
+        base_pos_zoom_factor = 1.15
+        base_neg_zoom_factor = 0.85
 
-        if numDegrees > 0:
-            zoom_factor = 2
+        num_degrees = event.angleDelta().y() / 8
+
+        if num_degrees > 0:
+            zoom_factor = base_pos_zoom_factor + (num_degrees / 360.0)
         else:
-            zoom_factor = 0.5
+            zoom_factor = base_neg_zoom_factor + (num_degrees / 360.0)
+
         self._display.Repaint()
         self._display.ZoomFactor(zoom_factor)
 
