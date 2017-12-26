@@ -9,6 +9,10 @@ python:
 #  - "nightly"
 # command to install dependencies
 install:
+  - curl -O https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh | bash -s -b $HOME/anaconda
+  - source ~/ANACONDA_INSTALL_DIR/bin/activate
+  - conda create -n cq-occ-testing -c pythonocc -c oce -c conda-forge -c dlr-sc -c CadQuery cadquery-occ
+  - source activate cq-occ-testing
   - pip3 install -r requirements.txt
 # command to run tests
 os:
