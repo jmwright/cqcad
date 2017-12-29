@@ -7,7 +7,6 @@ python:
   - "3.6-dev" # 3.6 development branch
 #  - "3.7-dev" # 3.7 development branch
 #  - "nightly"
-# command to install dependencies
 install:
   # Install anaconda
   - wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh -O anaconda.sh
@@ -24,9 +23,9 @@ install:
   - conda create -n cq-occ-testing -c pythonocc -c oce -c conda-forge -c dlr-sc -c CadQuery cadquery-occ
   - source activate cq-occ-testing
   - pip3 install -r requirements.txt
-# command to run tests
 os:
   - linux
 #  - osx
 script:
+  # command to run tests
   - pytest --pyargs cqcad # or py.test for Python versions 3.5 and below
