@@ -19,7 +19,7 @@ install:
   - conda info -a
 
   # Get the PythonOCC environment set up
-  - source $HOME/anaconda/bin/activate
+  # - source $HOME/anaconda/bin/activate
   - conda create -n cq-occ-testing -c pythonocc -c oce -c conda-forge -c dlr-sc -c CadQuery cadquery-occ
   - source activate cq-occ-testing
   - pip3 install -r requirements.txt
