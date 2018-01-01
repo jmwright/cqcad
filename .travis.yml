@@ -28,4 +28,4 @@ os:
 #  - osx
 script:
   # command to run tests
-  - pytest --pyargs cqcad # or py.test for Python versions 3.5 and below
+  - python -m pytest --pyargs cqcad # or py.test for Python versions 3.5 and below
