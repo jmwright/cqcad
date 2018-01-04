@@ -34,9 +34,12 @@ a = Analysis(['cqcad.py'],
              cipher=block_cipher)
 
 # Include directories with dynamically loaded scripts
-a.datas += extra_datas('layouts')
+a.datas += extra_datas('c_collections')
+a.datas += extra_datas('components')
+a.datas += extra_datas('content')
 a.datas += extra_datas('extensions')
-print('datas: ' + str(a.datas))
+a.datas += extra_datas('layouts')
+a.datas += extra_datas('templates')
 
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
