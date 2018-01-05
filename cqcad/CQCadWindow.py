@@ -257,6 +257,7 @@ class CQCadWindow(QMainWindow):
         self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
         self.mdiArea.addSubWindow(subWin)
         subWin.setWindowState(QtCore.Qt.WindowMaximized)
+        subWin.setWindowTitle('untitled.py')
 
         file = open("templates/script_template.py", "r")
         templateText = file.read()
@@ -316,6 +317,41 @@ class CQCadWindow(QMainWindow):
         templateText = file.read()
 
         child.setPlainText(templateText)
+
+    def executeScript(self):
+        """
+        Executes the script in the active editor window and displays it.
+        """
+        # Get the active window so we can get the script and match the title
+        activeWin = self.mdiArea.activeSubWindow()
+        scriptTitle = activeWin.windowTitle()
+
+        # If this isn't a script window we need to handle it differently
+        if ".py" not in scriptTitle:
+            self.statusBar().showMessage('Cannot Execute From a Non-Script Window')
+            return
+        else:
+            pass
+
+        # If the 3D view doesn't exist, create it
+        if True:
+            # Set up a new 3D view window
+            subWin = QMdiSubWindow()
+            # self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
+            self.mdiArea.addSubWindow(subWin)
+
+            child = Viewer3D(self)
+            subWin.setWidget(child)
+            subWin.setWindowTitle(scriptTitle + " (3D)")
+
+            # If we don't do this the window title bar can disappear
+            subWin.setMinimumSize(100, 300)
+
+            subWin.setWindowState(QtCore.Qt.WindowMaximized)
+
+            # For now display a default object
+            child.InitDriver()
+            child._display.Test()
 
     def setInitialGUIState(self):
         # Mouse vs script mode

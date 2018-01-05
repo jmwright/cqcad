@@ -193,5 +193,6 @@ class Viewer3D(qtBaseViewer):
             self._select_area = True
             self.DrawBox(evt)
         else:
-            self._drawbox = False
-            self._display.MoveTo(pt.x, pt.y)
+            pass
+            # self._drawbox = False
+            # self._display.MoveTo(pt.x, pt.y)

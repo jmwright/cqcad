@@ -23,7 +23,7 @@ def setup(mainWindow):
     execAct.setShortcut('F2')
     execAct.setStatusTip(execTip)
     execAct.setObjectName('execAct')
-    execAct.triggered.connect(mainWindow.notImplemented)
+    execAct.triggered.connect(mainWindow.executeScript)
 
     debugAct = QAction(QIcon('content/images/Material/ic_bug_report_24px.svg'), '&' + dbgName, mainWindow)
     debugAct.setShortcut('F5')
