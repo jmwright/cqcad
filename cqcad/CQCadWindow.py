@@ -330,11 +330,12 @@ class CQCadWindow(QMainWindow):
         if ".py" not in scriptTitle:
             self.statusBar().showMessage('Cannot Execute From a Non-Script Window')
             return
-        else:
-            pass
+
+        # See if the 3D view is somewhere in the MDI subwindows
+        subWin = self.getSubwindowByName(scriptTitle + " (3D)")
 
         # If the 3D view doesn't exist, create it
-        if True:
+        if subWin == None:
             # Set up a new 3D view window
             subWin = QMdiSubWindow()
             # self.mdiArea.setWindowIcon(QIcon('content/images/python_logo.svg'))
@@ -352,6 +353,21 @@ class CQCadWindow(QMainWindow):
             # For now display a default object
             child.InitDriver()
             child._display.Test()
+
+        # Extract the text from the script window, execute it, and display the result
+        scriptText = activeWin.widget().toPlainText()
+        print(scriptText)
+
+    def getSubwindowByName(self, name):
+        """
+        Searches for a subwindow in the MDI area by name
+        """
+        foundWin = None
+        for subwin in self.mdiArea.subWindowList():
+            if subwin.windowTitle() == name:
+                foundWin = subwin
+
+        return foundWin
 
     def setInitialGUIState(self):
         # Mouse vs script mode
